@@ -21,8 +21,8 @@ namespace RpsGame_NoDb
         //     }
         // }
 
-        private int numWins;
-        private int numLosses;
+        public int numWins { get; set; }
+        public int numLosses{ get; set; }
         private string fName;
         public string Fname
         {
