@@ -2,7 +2,7 @@ using System;
 
 namespace StoreApp
 {
-    public class Inventory : Quantity
+    public class Inventory : InventoryQuantity
     {
         public Guid InventoryId { get; set; } = Guid.NewGuid();
         public Product Product { get; set; }
