@@ -220,9 +220,12 @@ namespace StoreApp
                     Console.WriteLine($"Can not checkout with {item.Item.Product.ProductName}. {item.Item.StoreLocation.StoreLocationName} does not have enough inventory.\n\tRequested: {item.QuantityOrdered}\n\tIn stock: {item.Item.ProductQuantity}");
                     Console.WriteLine($"Removing {item.Item.Product.ProductName} from your cart");
                     orderDetails.Remove(item);
+                } else
+                {
+                    SubtractInventoryOnOrder(item.Item, item.QuantityOrdered);
                 }
 
-                SubtractInventoryOnOrder(item.Item, item.QuantityOrdered);
+                
             }
             cartOrder.isOrdered = true;
             cartOrder.isCart = false;
