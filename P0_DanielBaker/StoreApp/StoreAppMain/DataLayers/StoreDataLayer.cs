@@ -261,11 +261,6 @@ namespace StoreApp
         {
             Product selectedProduct = new Product();
             selectedProduct = products.Where(x => x.ProductName == name).FirstOrDefault();
-            if(selectedProduct == null)
-            {
-                Console.WriteLine("Please enter a valid product");
-                return null;
-            }
             return selectedProduct;
         }
 

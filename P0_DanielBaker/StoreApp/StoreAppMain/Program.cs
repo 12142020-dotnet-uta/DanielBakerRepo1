@@ -147,7 +147,11 @@ namespace StoreApp
 
                         string selectedProduct = Console.ReadLine();
                         Product currentProduct = storeState.SelectProduct(selectedProduct);
-
+                        if(currentProduct == null)
+                        {
+                            Console.WriteLine("Please enter a valid product");
+                            break;
+                        }
                         Console.WriteLine($"Selected product: {currentProduct.ProductName}\n Please enter the quantity of {currentProduct.ProductName} to add to {currentStore.StoreLocationName}");
                         int quantityAdd = InputFunctions.ParseStringToInt(Console.ReadLine());
 
