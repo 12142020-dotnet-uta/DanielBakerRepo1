@@ -193,6 +193,7 @@ namespace StoreApp
             else
             {
                 itemOrder.QuantityOrdered += quantity;
+                itemOrder.Price += quantity * item.Product.ProductPrice;
                 if(itemOrder.QuantityOrdered > item.ProductQuantity)
                 {
                     Console.WriteLine($"Cannot order {itemOrder.QuantityOrdered } there are only {item.ProductQuantity}");
