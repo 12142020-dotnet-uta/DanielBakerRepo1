@@ -24,7 +24,8 @@ namespace StoreApp
             bool isNumber = Decimal.TryParse( numberString, out number );
             if(isNumber == false)
             {
-                return -1;
+                Console.WriteLine("Please enter a price");
+                return ParseStringToDecimal(Console.ReadLine());
             }
             else
             {
@@ -38,7 +39,8 @@ namespace StoreApp
             bool isBool = Boolean.TryParse( s, out boolString );
             if(isBool == false)
             {
-                throw new Exception("You did not enter true or false");
+                Console.WriteLine("Please enter true or false");
+                return ParseStringToBool(Console.ReadLine());
             }
             else
             {

@@ -2,13 +2,18 @@ using System;
 
 namespace StoreApp
 {
-    public class Inventory
+    public class Inventory : Quantity
     {
         public Guid InventoryId { get; set; } = Guid.NewGuid();
         public Product Product { get; set; }
         public StoreLocation StoreLocation { get; set; }
         public int ProductQuantity { get; set; } = 0;
         
+        public int AddQuantity(int x)
+        {
+            ProductQuantity += x;
+            return ProductQuantity;
+        }
         public Inventory(){}
 
         public Inventory( Product product, StoreLocation store, int quantity )

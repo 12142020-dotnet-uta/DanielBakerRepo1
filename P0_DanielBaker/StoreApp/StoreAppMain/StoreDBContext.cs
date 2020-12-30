@@ -17,7 +17,7 @@ namespace StoreApp
         {
             if(!options.IsConfigured)
             {
-                options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=Targmarttest;Trusted_Connection=True;");
+                options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=Targmart;Trusted_Connection=True;");
             }
             
         }
