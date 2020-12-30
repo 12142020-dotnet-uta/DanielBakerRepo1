@@ -20,9 +20,14 @@ namespace StoreApp
                     Console.Write("See you again soon!!!");
                     break;
                 }
+                Customer activeCustomer = null;
+                do
+                {
+                    Console.WriteLine("Enter a username to login or create a new account");
+                    activeCustomer = storeState.LoginCustomer(Console.ReadLine());
+                } while( activeCustomer == null);
+                
 
-                Console.WriteLine("Enter a username to login or create a new account");
-                Customer activeCustomer = storeState.LoginCustomer(Console.ReadLine());
                 int shopState = 1;
                 do
                 {
@@ -55,6 +60,11 @@ namespace StoreApp
                                
                                 Console.WriteLine("Welcome to TargMart! Please select your store by name to being shopping:");   
                                 currentStore = GetStore();
+                                if(currentStore == null)
+                                {
+                                    Console.WriteLine("This store does not exist");
+                                    break;
+                                }
                                 Console.WriteLine($"Logged into {currentStore.StoreLocationName} ID: {currentStore.StoreLocationId}");
 
                                 Console.WriteLine("Type the name of the product to select a quantity to buy, or press 1 to go back to store selection");
@@ -62,13 +72,18 @@ namespace StoreApp
 
                                 foreach(Inventory i in inventory)
                                 {
-                                    Console.WriteLine($"{i.Product.ProductName} {i.ProductQuantity}");
+                                    Console.WriteLine($"\tName: {i.Product.ProductName} | Quantity: {i.ProductQuantity} | Price: {i.Product.ProductPrice}");
                                 }
 
                                 string selectedStore = Console.ReadLine();
 
                                 Inventory item = storeState.SelectInventory(selectedStore, currentStore);
 
+                                if(item == null)
+                                {
+                                    Console.WriteLine("This item does not exist at this store");
+                                    break;
+                                }
                                 Console.WriteLine($"How much {item.Product.ProductName} do you want to buy?");
 
                                 int quantity = InputFunctions.ParseStringToInt(Console.ReadLine());
@@ -115,6 +130,11 @@ namespace StoreApp
                         Console.WriteLine("Select store by name to add a product to it.");
 
                         currentStore = GetStore();
+                        if(currentStore == null)
+                        {
+                            Console.WriteLine("This store does not exist");
+                            break;
+                        }
                         Console.WriteLine($"Logged into {currentStore.StoreLocationName} ID: {currentStore.StoreLocationId}");
 
                         Console.WriteLine($"Select a product by name to add it to {currentStore.StoreLocationName}:");
@@ -122,7 +142,7 @@ namespace StoreApp
                         
                         foreach(Product p in products)
                         {
-                            Console.WriteLine($"{p.ProductName}");
+                            Console.WriteLine($"\t{p.ProductName}");
                         }
 
                         string selectedProduct = Console.ReadLine();
@@ -135,6 +155,11 @@ namespace StoreApp
                     } else if(shopState == 6 && activeCustomer.isAdmin == true)
                     {
                         currentStore = GetStore();
+                        if(currentStore == null)
+                        {
+                            Console.WriteLine("This store does not exist");
+                            break;
+                        }
                         GetOrderList(store: currentStore);
 
                     } else if(shopState == 7 && activeCustomer.isAdmin == true)
@@ -159,7 +184,7 @@ namespace StoreApp
             List<StoreLocation> stores = storeState.GetStores();
             foreach(StoreLocation s in stores)
             {
-                Console.WriteLine(s.StoreLocationName);
+                Console.WriteLine($"\t{s.StoreLocationName}");
             }
             string selectedStore = Console.ReadLine();
             return storeState.SelectStore(selectedStore);
@@ -261,7 +286,7 @@ namespace StoreApp
             List<Customer> customers = storeState.GetCustomers();
             foreach(Customer c in customers)
             {
-                Console.WriteLine($"{c.CustomerUserName} {c.CustomerFName} {c.CustomerLName}");
+                Console.WriteLine($"Username: {c.CustomerUserName} | First Name: {c.CustomerFName} | Last Name: {c.CustomerLName}");
             }
         }
 

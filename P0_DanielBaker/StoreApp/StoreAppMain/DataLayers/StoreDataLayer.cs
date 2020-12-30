@@ -50,10 +50,18 @@ namespace StoreApp
             else
             {
                 bool correctPassword;
+                int tries = 0;
                 do
-                {
+                {   
+                    if(tries == 3)
+                    {
+                        Console.WriteLine("Password authentication failed. Logging out...");
+                        return null;
+                    }
                     Console.WriteLine($"Please enter the correct password for {activeCustomer.CustomerUserName}");
                     correctPassword = login.PasswordCheck(activeCustomer);
+                    
+                    tries ++;
                 } while( correctPassword == false);
             }
             return activeCustomer;
@@ -168,7 +176,13 @@ namespace StoreApp
                 itemOrder = new OrderDetails( item, currentOrder, quantity);
                 if(itemOrder.QuantityOrdered > addedInventory.ProductQuantity)
                 {
-                     throw new Exception($"Cannot order {itemOrder.QuantityOrdered } there are only {item.ProductQuantity}");
+                     Console.WriteLine($"Cannot order {itemOrder.QuantityOrdered } there are only {item.ProductQuantity}");
+                     return null;
+                }
+                if(itemOrder.Item.Product.IsAgeRestricted == true && itemOrder.Order.Customer.CustomerAge <= 18)
+                {
+                    Console.WriteLine($"Cannot order {itemOrder.Item.Product.ProductName}. Must be 18 or older to order");
+                    return null;
                 }
                 decimal total = addedInventory.Product.ProductPrice * quantity;
                 Console.WriteLine($"Added {quantity} {addedInventory.Product.ProductName} to your cart at ${addedInventory.Product.ProductPrice} each. For a total of ${total}");
@@ -181,7 +195,8 @@ namespace StoreApp
                 itemOrder.QuantityOrdered += quantity;
                 if(itemOrder.QuantityOrdered > item.ProductQuantity)
                 {
-                    throw new Exception($"Cannot order {itemOrder.QuantityOrdered } there are only {item.ProductQuantity}");
+                    Console.WriteLine($"Cannot order {itemOrder.QuantityOrdered } there are only {item.ProductQuantity}");
+                    return null;
                 }
             }
             DbContext.SaveChanges();
@@ -201,7 +216,9 @@ namespace StoreApp
             {
                 if((item.Item.ProductQuantity - item.QuantityOrdered) < 0)
                 {
-                    throw new Exception($"Can not checkout. You are odering too much {item.Item.Product.ProductName}.");
+                    Console.WriteLine($"Can not checkout with {item.Item.Product.ProductName}. {item.Item.StoreLocation.StoreLocationName} does not have enough inventory.\n\tRequested: {item.QuantityOrdered}\n\tIn stock: {item.Item.ProductQuantity}");
+                    Console.WriteLine($"Removing {item.Item.Product.ProductName} from your cart");
+                    orderDetails.Remove(item);
                 }
 
                 SubtractInventoryOnOrder(item.Item, item.QuantityOrdered);
@@ -246,7 +263,8 @@ namespace StoreApp
             selectedProduct = products.Where(x => x.ProductName == name).FirstOrDefault();
             if(selectedProduct == null)
             {
-                throw new Exception("Please enter a valid product");
+                Console.WriteLine("Please enter a valid product");
+                return null;
             }
             return selectedProduct;
         }
@@ -261,12 +279,6 @@ namespace StoreApp
         {
             Inventory selectedInventory = new Inventory();
             selectedInventory = inventories.Include(x => x.StoreLocation).Include(x => x.Product).Where(x => x.StoreLocation.StoreLocationName == store.StoreLocationName && x.Product.ProductName == name).FirstOrDefault();
-            
-            if(selectedInventory == null)
-            {
-                throw new Exception("This item does not exist at this store");
-            }
-         
             return selectedInventory;
         }
 
@@ -296,13 +308,7 @@ namespace StoreApp
         public StoreLocation SelectStore(string name)
         {
             StoreLocation activeStore = new StoreLocation();
-            foreach(StoreLocation s in stores)
-            {
-                if(s.StoreLocationName == name)
-                {
-                    activeStore = s;
-                }
-            }
+            activeStore = stores.Where(x => x.StoreLocationName == name).FirstOrDefault();
             return activeStore;
         }
 

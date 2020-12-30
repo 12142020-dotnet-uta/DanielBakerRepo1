@@ -44,7 +44,7 @@ namespace StoreApp
         /// Checks the users password against the database to verify the password. Returns false if the wrong password, returns true with correct password.
         /// </summary>
         /// <param name="c">Customer object trying to log in</param>
-        /// <returns></returns>
+        /// <returns>Boolean if the password is correct</returns>
         public bool PasswordCheck(Customer c)
         {
             string pw = Console.ReadLine();
