@@ -1,0 +1,58 @@
+.navbar {
+    margin-bottom: 0;
+}
+.hero-background {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.unsplash.com/photo-1560762484-813fc97650a0?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80");
+    height: 100%;
+    background-size: cover;
+    padding: 150px 0;
+    color: #fff;
+    text-align: center;
+}
+
+.hero-background h1 {
+    font-size: 60px;
+    font-weight: 500;
+}
+
+.hero-background h3 {
+    font-size: 36px;
+    font-weight: 500;
+}
+
+.homepage-blog h4 {
+    font-size: 24px;
+}
+
+.homepage-blog img {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 10px;
+}
+
+.blog-post {
+    margin-top: 50px;
+}
+
+.blog-post h2 {
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.homepage-blog-post {
+    margin-bottom: 20px;
+}
+
+.img-container img {
+    max-width: 100%;
+}
+
+.calendar-widget img{
+    display: block;
+    margin: 0 auto;
+}
+
+.calendar-widget h5{
+ font-size: 24px;
+}
+

@@ -1,0 +1,9 @@
+﻿@model ModelLayer.ViewModels.CustomerInfoViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Welcome @Model.CustomerFName!</h1>
+
+<a asp-controller="Customer" asp-action="Details" asp-route-id="@Model.CustomerID">Details</a>
+<a asp-controller="Customer" asp-action="GetAllCustomers">View All Customers</a>

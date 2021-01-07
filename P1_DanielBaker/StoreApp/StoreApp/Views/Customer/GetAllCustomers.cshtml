@@ -1,0 +1,30 @@
+﻿@model ModelLayer.ViewModels.CustomerListViewModel
+
+@{
+    ViewData["Title"] = "GetAllCustomers";
+}
+
+<h1>GetAllCustomers</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var customer in Model.Customers) {
+        <tr>
+            <td>
+                @customer.CustomerFName @customer.CustomerLName
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
