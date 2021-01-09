@@ -71,6 +71,86 @@ namespace RepositoryLayer
         {
             return customers.ToList();
         }
+
+        public Customer EditCustomer(Customer c)
+        {
+            Customer editedCustomer = GetCustomerById(c.CustomerID);
+
+            if (editedCustomer == null)
+            {
+                return null;
+            }
+
+            editedCustomer.CustomerFName = c.CustomerFName;
+            editedCustomer.CustomerLName = c.CustomerLName;
+            editedCustomer.CustomerAge = c.CustomerAge;
+            editedCustomer.CustomerBirthday = c.CustomerBirthday;
+
+            _context.SaveChanges();
+
+            return editedCustomer;
+
+        }
+
+        public List<StoreLocation> GetStoreList()
+        {
+            return stores.ToList();
+        }
+
+
+
+        public StoreLocation CreateStore(StoreLocation newStore)
+        {
+            StoreLocation s = stores.FirstOrDefault(s => s.StoreLocationName == newStore.StoreLocationName);
+            if (s == null)
+            {
+                StoreLocation newStoreLocation = new StoreLocation()
+                {
+                    StoreLocationName = newStore.StoreLocationName,
+                    StoreLocationAddress = newStore.StoreLocationAddress,
+  
+                };
+
+                stores.Add(newStoreLocation);
+                _context.SaveChanges();
+                return newStoreLocation;
+            }
+
+            //returning null if a store with that user name already exists
+            return null;
+        }
+
+        public StoreLocation GetStoreById(Guid id)
+        {
+            StoreLocation store = stores.FirstOrDefault(s => s.StoreLocationId == id);
+            return store;
+        }
+
+        public StoreLocation EditStore(StoreLocation storeToEdit)
+        {
+            StoreLocation store = stores.FirstOrDefault(s => s.StoreLocationId == storeToEdit.StoreLocationId);
+
+            if (store == null)
+            {
+                return null;
+            }
+
+            store.StoreLocationName = storeToEdit.StoreLocationName;
+            store.StoreLocationAddress = storeToEdit.StoreLocationAddress;
+
+            _context.SaveChanges();
+
+            return store;
+        }
+
+        public List<Product> GetProductList()
+        {
+            return products.ToList();
+        }
+
+
+
+
     }
 
 }

@@ -25,6 +25,13 @@ namespace StoreApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+            });
+
             services.AddControllersWithViews();
             services.AddScoped<StoreDbContext>();
             services.AddScoped<Repository>();
@@ -49,7 +56,7 @@ namespace StoreApp
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

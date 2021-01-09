@@ -54,9 +54,6 @@ namespace _12142020_MvcRpsDemo.Controllers
         // GET: PlayerController/Edit/5
         [Route("{playerGuid}")]
         public ActionResult EditPlayer(Guid playerGuid)
-
-
-
         {
             PlayerViewModel playerViewModel = _businessLogic.EditPlayer(playerGuid);
             return View(playerViewModel);

@@ -1,0 +1,29 @@
+﻿@model ModelLayer.ViewModels.StoreListViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="CreateStore">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var store in Model.StoreLoactions) {
+        <tr>
+            <td>
+                @store.StoreLocationName | @store.StoreLocationAddress
+                <a asp-controller="Shop" asp-action="Details" asp-route-id="@store.StoreLocationId">Store details</a> |
+                <a asp-controller="Shop" asp-action="Edit" asp-route-id="@store.StoreLocationId">Edit Store</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

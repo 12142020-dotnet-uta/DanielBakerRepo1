@@ -24,5 +24,34 @@ namespace BusinessLogicLayer
 
             return customerInfoViewModel;
         }
+
+
+        public StoreInfoViewModel ConvertStoreToStoreInfoViewModel(StoreLocation store)
+        {
+            StoreInfoViewModel storeInfoViewModel = new StoreInfoViewModel()
+            {
+                StoreLocationId = store.StoreLocationId,
+                StoreLocationName = store.StoreLocationName,
+                StoreLocationAddress = store.StoreLocationAddress,
+                Inventory = store.Inventory
+            };
+
+            return storeInfoViewModel;
+        }
+
+        public ProductInfoViewModel ConvertProductToProductInfoViewModel(Product product)
+        {
+            ProductInfoViewModel productInfoViewModel = new ProductInfoViewModel()
+            {
+                ProductName = product.ProductName,
+                ProductDesc = product.ProductDesc,
+                ProductPrice = product.ProductPrice
+            };
+
+            return productInfoViewModel;
+        }
+
+
+
     }
 }

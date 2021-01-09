@@ -1,10 +1,10 @@
-﻿@model ModelLayer.ViewModels.CreateCustomerViewModel
+﻿@model ModelLayer.ViewModels.CustomerInfoViewModel
 
 @{
-    ViewData["Title"] = "CreateCustomer";
+    ViewData["Title"] = "Edit";
 }
 
-<h1>CreatePlayer</h1>
+<h1>Edit</h1>
 
 <div style="color:red;">@Html.ValidationSummary()</div>
 <div class="row">
@@ -12,21 +12,23 @@
     <div class="col-lg-12">@ViewBag.Message</div>
 </div>
 
-<h4>CreatePlayerViewModel</h4>
+@if (Model != null)
+{
+<h4>CustomerInfoViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateNewCustomer">
+        <form asp-action="EditPlayer">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CustomerID" class="control-label"></label>
+                <input asp-for="CustomerID" class="form-control" />
+                <span asp-validation-for="CustomerID" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="CustomerUserName" class="control-label"></label>
                 <input asp-for="CustomerUserName" class="form-control" />
                 <span asp-validation-for="CustomerUserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CustomerPassword" class="control-label"></label>
-                <input asp-for="CustomerPassword" class="form-control" />
-                <span asp-validation-for="CustomerPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CustomerFName" class="control-label"></label>
@@ -49,13 +51,18 @@
                 <span asp-validation-for="CustomerBirthday" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Sign Up!" class="btn btn-primary" />
+                <label asp-for="isAdmin" class="control-label"></label>
+                <input asp-for="isAdmin" class="form-control" />
+                <span asp-validation-for="isAdmin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

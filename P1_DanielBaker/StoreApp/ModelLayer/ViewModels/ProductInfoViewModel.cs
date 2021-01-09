@@ -1,13 +1,14 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ModelLayer.Models
+namespace ModelLayer.ViewModels
 {
-    public class Product
+    public class ProductInfoViewModel
     {
-        [Key]
-        public Guid ProductID { get; set ; } = Guid.NewGuid();
-
         [Required]
         [StringLength(40, MinimumLength = 2, ErrorMessage = "Product name must be from 3 to 40 characters.")]
         [Display(Name = "Product Name")]
@@ -26,15 +27,5 @@ namespace ModelLayer.Models
         [Required]
         [Display(Name = "Age Restriction")]
         public bool IsAgeRestricted { get; set; }
-
-        public Product(){}
-
-        public Product( string name, string desc, decimal price, bool ageRestricted )
-        {
-            this.ProductName = name;
-            this.ProductDesc = desc;
-            this.ProductPrice = price;
-            this.IsAgeRestricted = ageRestricted;
-        }
     }
 }

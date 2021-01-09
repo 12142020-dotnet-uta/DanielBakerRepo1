@@ -26,12 +26,21 @@ namespace StoreApp.Controllers
         }
 
         // GET: CustomerController/Details/5
+        [HttpGet]
         public ActionResult Details(Guid id)
         {
-            CustomerInfoViewModel custonerInfo = _logic.GetCustomerById(id);
-            return View(custonerInfo);
+            CustomerInfoViewModel customerInfo = _logic.GetCustomerById(id);
+
+            if (customerInfo == null)
+            {
+                ModelState.AddModelError("Failure", "Customer does not exist");
+                return View(customerInfo);
+            }
+
+            return View(customerInfo);
         }
 
+        [HttpGet]
         public IActionResult GetAllCustomers()
         {
             CustomerListViewModel customerList = _logic.GetCustomerList();
@@ -40,12 +49,28 @@ namespace StoreApp.Controllers
 
 
         // GET: CustomerController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
-            return View();
+            CustomerInfoViewModel customerToEdit = _logic.GetCustomerById(id);
+
+            if (customerToEdit == null)
+            {
+                ModelState.AddModelError("Failure", "Customer does not exist to edit");
+                return View(customerToEdit);
+            }
+
+            return View(customerToEdit);
+        }
+
+        public ActionResult EditPlayer(CustomerInfoViewModel customerToEdit)
+        {
+            CustomerInfoViewModel editedCustomer = _logic.EditCustomer(customerToEdit);
+           
+            return View("Details", editedCustomer);
         }
 
         // POST: CustomerController/Edit/5
+        // LOOK INTO THIS???
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -60,25 +85,6 @@ namespace StoreApp.Controllers
             }
         }
 
-        // GET: CustomerController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: CustomerController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+       
     }
 }

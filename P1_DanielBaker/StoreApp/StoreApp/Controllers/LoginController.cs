@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BusinessLogicLayer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelLayer.ViewModels;
 
@@ -11,6 +12,8 @@ namespace StoreApp.Controllers
     public class LoginController : Controller
     {
         private BusinessLogicClass _logic;
+
+        public object Session { get; private set; }
 
         public LoginController(BusinessLogicClass logic)
         {
@@ -27,8 +30,12 @@ namespace StoreApp.Controllers
             CustomerInfoViewModel customerLoggingIn = _logic.LoginUser(loginView);
             if (customerLoggingIn == null)
             {
-                return RedirectToAction("PlayerDoesNotExist");
+                ModelState.AddModelError("Failure", "Wrong Username and password combination!");
+                return View("Index");
             }
+
+            HttpContext.Session.SetString("customerId", customerLoggingIn.CustomerID.ToString());
+
             return RedirectToAction("Index", "Customer", customerLoggingIn);
         }
 
@@ -37,8 +44,10 @@ namespace StoreApp.Controllers
         {
             if (newUser == null)
             {
-                return RedirectToAction("PlayerDoesNotExist");
+                ModelState.AddModelError("Failure", "Wrong Username and password combination!");
+                return View("Index");
             }
+            HttpContext.Session.SetString("customerId", newUser.CustomerID.ToString());
             return RedirectToAction("Index", "Customer", newUser);
         }
 
@@ -47,26 +56,26 @@ namespace StoreApp.Controllers
             return View();
         }
 
+
+        // add error stuff here
         public IActionResult CreateNewCustomer(CreateCustomerViewModel signUpView)
         {
-            CustomerInfoViewModel playerCreated = _logic.CreateUser(signUpView);
+            CustomerInfoViewModel customerCreated = _logic.CreateUser(signUpView);
 
-            if (playerCreated == null)
+            if (customerCreated == null)
             {
-                return RedirectToAction("PlayerAlreadyExists");
+                ModelState.AddModelError("Failure", "Username already exists");
+                return View("CreateCustomer");
             }
 
-            return RedirectToAction("NewCustomer", playerCreated);
+            return RedirectToAction("NewCustomer", customerCreated);
         }
 
-        public IActionResult PlayerDoesNotExist()
+       public IActionResult Logout()
         {
-            return View();
-        }
+            HttpContext.Session.Clear();
 
-        public IActionResult PlayerAlreadyExists()
-        {
-            return View();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

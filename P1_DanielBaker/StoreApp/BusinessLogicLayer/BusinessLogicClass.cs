@@ -4,8 +4,10 @@ using ModelLayer.Models;
 using ModelLayer.ViewModels;
 using RepositoryLayer;
 
+
 namespace BusinessLogicLayer
 {
+
     public class BusinessLogicClass
     {
         private readonly Repository _repo;
@@ -67,6 +69,11 @@ namespace BusinessLogicLayer
         {
             Customer customer = _repo.GetCustomerById(id);
 
+            if (customer == null)
+            {
+                return null;
+            }
+
             CustomerInfoViewModel customerInfo = _mapper.ConvertCustomerToCustomerInfoViewModel(customer);
 
             return customerInfo;
@@ -90,6 +97,104 @@ namespace BusinessLogicLayer
             return customerList;
         }
 
+        public CustomerInfoViewModel EditCustomer(CustomerInfoViewModel customerToEdit)
+        {
+            Customer customer = _repo.GetCustomerById(customerToEdit.CustomerID);
+
+            customer.CustomerFName = customerToEdit.CustomerFName;
+            customer.CustomerLName = customerToEdit.CustomerLName;
+            customer.CustomerAge = customerToEdit.CustomerAge;
+            customer.CustomerBirthday = customerToEdit.CustomerBirthday;
+
+            Customer editedCustomer = _repo.EditCustomer(customer);
+
+            CustomerInfoViewModel editedCustomerViewModel = _mapper.ConvertCustomerToCustomerInfoViewModel(editedCustomer);
+
+            return editedCustomerViewModel;
+        }
+
+        public StoreInfoViewModel CreateStore(StoreInfoViewModel createdStore)
+        {
+            StoreLocation store = new StoreLocation()
+            {
+                StoreLocationName = createdStore.StoreLocationName,
+                StoreLocationAddress = createdStore.StoreLocationAddress
+            };
+
+            // if null???? 
+            StoreLocation newStore = _repo.CreateStore(store);
+
+            if (newStore == null)
+            {
+                return null;
+            }
+
+            StoreInfoViewModel newStoreViewModel = _mapper.ConvertStoreToStoreInfoViewModel(newStore);
+
+            return newStoreViewModel;
+        }
+
+        public StoreListViewModel GetStoreList()
+        {
+            StoreListViewModel storeList = new StoreListViewModel();
+            List<StoreInfoViewModel> storeViewModels = new List<StoreInfoViewModel>();
+            List<StoreLocation> stores = _repo.GetStoreList();
+
+
+            foreach (StoreLocation s in stores)
+            {
+                storeViewModels.Add(_mapper.ConvertStoreToStoreInfoViewModel(s));
+            }
+
+            storeList.StoreLoactions = storeViewModels;
+
+            return storeList;
+        }
+
+
+        public StoreInfoViewModel GetStoreById(Guid id)
+        {
+            StoreLocation storeToEdit = _repo.GetStoreById(id);
+
+            if (storeToEdit == null)
+            {
+                return null;
+            }
+
+            StoreInfoViewModel storeViewToEdit = _mapper.ConvertStoreToStoreInfoViewModel(storeToEdit);
+            
+            return storeViewToEdit;
+        }
+
+        public StoreInfoViewModel EditStore(StoreInfoViewModel storeToEdit)
+        {
+            StoreLocation store = _repo.GetStoreById(storeToEdit.StoreLocationId);
+
+            store.StoreLocationName = storeToEdit.StoreLocationName;
+            store.StoreLocationAddress = storeToEdit.StoreLocationAddress;
+
+            StoreLocation editedStore = _repo.EditStore(store);
+
+            StoreInfoViewModel editedStoreIfoViewModel = _mapper.ConvertStoreToStoreInfoViewModel(editedStore);
+
+            return editedStoreIfoViewModel;
+        }
+
+        public ProductListViewModel GetProductList()
+        {
+            ProductListViewModel productList = new ProductListViewModel();
+            List<Product> products = _repo.GetProductList();
+            List<ProductInfoViewModel> productsInfo = new List<ProductInfoViewModel>();
+
+            foreach (Product p in products)
+            {
+                productsInfo.Add(_mapper.ConvertProductToProductInfoViewModel(p));
+            }
+
+            productList.Products = productsInfo;
+
+            return productList;
+        }
 
     }
 }

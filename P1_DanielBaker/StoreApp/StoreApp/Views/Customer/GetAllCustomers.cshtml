@@ -6,9 +6,7 @@
 
 <h1>GetAllCustomers</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
 <table class="table">
     <thead>
         <tr>
@@ -20,9 +18,9 @@
         <tr>
             <td>
                 @customer.CustomerFName @customer.CustomerLName
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                <a asp-controller="Customer" asp-action="Details" asp-route-id="@customer.CustomerID" method="get">Details</a> |
+                <a asp-controller="Customer" asp-action="Edit" asp-route-id="@customer.CustomerID" method="get">Edit Profile</a>
+
             </td>
         </tr>
 }
