@@ -196,5 +196,28 @@ namespace BusinessLogicLayer
             return productList;
         }
 
+        public ProductInfoViewModel CreateProduct(ProductInfoViewModel newProduct)
+        {
+            Product product = new Product()
+            {
+                ProductName = newProduct.ProductName,
+                ProductDesc = newProduct.ProductDesc,
+                ProductPrice = newProduct.ProductPrice,
+                IsAgeRestricted = newProduct.IsAgeRestricted
+            };
+
+
+            Product createProduct = _repo.CreateProduct(product);
+
+            if (createProduct == null)
+            {
+                return null;
+            }
+
+            ProductInfoViewModel newProductInfoViewModel = _mapper.ConvertProductToProductInfoViewModel(createProduct);
+
+            return newProductInfoViewModel;
+        }
+
     }
 }

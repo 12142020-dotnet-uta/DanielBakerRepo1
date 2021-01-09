@@ -148,6 +148,32 @@ namespace RepositoryLayer
             return products.ToList();
         }
 
+        public Product CreateProduct(Product newProduct)
+        {
+
+            Product p = products.FirstOrDefault(p => p.ProductName == newProduct.ProductName);
+            if (p == null)
+            {
+                Product product = new Product()
+                {
+                    ProductName = newProduct.ProductName,
+                    ProductDesc = newProduct.ProductDesc,
+                    ProductPrice = newProduct.ProductPrice,
+                    IsAgeRestricted = newProduct.IsAgeRestricted
+                };
+
+                products.Add(product);
+                _context.SaveChanges();
+                return product;
+            }
+
+            //returning null if a products with that user name already exists
+            return null;
+        }
+
+
+
+
 
 
 

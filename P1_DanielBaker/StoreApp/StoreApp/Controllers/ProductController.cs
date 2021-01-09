@@ -24,6 +24,26 @@ namespace StoreApp.Controllers
             return View(productList);
         }
 
+        public IActionResult CreateProduct()
+        {
+            return View();
+        }
+
+        public IActionResult CreateNewProduct(ProductInfoViewModel newProduct)
+        {
+
+            ProductInfoViewModel productCreated = _logic.CreateProduct(newProduct);
+
+            if (productCreated == null)
+            {
+                ModelState.AddModelError("Failure", "Product already exists");
+                return View("CreateProduct");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
 
 
     }

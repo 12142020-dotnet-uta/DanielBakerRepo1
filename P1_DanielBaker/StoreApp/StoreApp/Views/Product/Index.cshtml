@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="CreateProduct">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -19,6 +19,8 @@
 @foreach (var item in Model.Products) {
         <tr>
             <td>
+                @item.ProductName
+                @item.ProductDesc
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
