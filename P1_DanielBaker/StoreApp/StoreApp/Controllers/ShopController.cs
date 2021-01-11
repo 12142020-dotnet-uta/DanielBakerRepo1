@@ -57,6 +57,11 @@ namespace StoreApp.Controllers
         public IActionResult Edit(Guid id)
         {
             StoreInfoViewModel storeToEdit = _logic.GetStoreById(id);
+            if (storeToEdit == null)
+            {
+                ModelState.AddModelError("Failure", "Store does not exist");
+                return View(storeToEdit);
+            }
 
             return View(storeToEdit);
         }
@@ -64,14 +69,44 @@ namespace StoreApp.Controllers
         public IActionResult EditStore(StoreInfoViewModel storeToEdit)
         {
             StoreInfoViewModel editedStore = _logic.EditStore(storeToEdit);
+            if (editedStore == null)
+            {
+                ModelState.AddModelError("Failure", "Store does not exist");
+                return View("Edit", editedStore);
+            }
             return View("Details", editedStore);
         }
 
         public IActionResult Store(Guid id)
         {
-            return View();
+            InventoryListViewModel storeInventory = _logic.GetStoreInventory(id);
+            return View(storeInventory);
         }
 
-        
+        [Route("shop/store/addinventory/{id}")]
+        public IActionResult AddInventory(Guid id)
+        {
+            AddInventoryViewModel addInventory = _logic.AddInventory(id);
+            if (addInventory == null)
+            {
+                ModelState.AddModelError("Failure", "Store does not exist");
+                return RedirectToAction("Index");
+            }
+            return View(addInventory);
+        }
+
+        public IActionResult AddNewInventory(AddInventoryViewModel newInventory)
+        {
+            InventoryListViewModel currentStoreInventory = _logic.AddNewInventory(newInventory.StoreId, newInventory.ProductName, newInventory.QuantityAdded);
+            if (currentStoreInventory == null)
+            {
+                ModelState.AddModelError("Failure", "Product does not exist");
+                return RedirectToAction("Index");
+            }
+            return View("Store", currentStoreInventory);
+        }
+
+
+
     }
 }

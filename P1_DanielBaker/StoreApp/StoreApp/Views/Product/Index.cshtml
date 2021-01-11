@@ -16,14 +16,17 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Products) {
+@foreach (var product in Model.Products) {
         <tr>
             <td>
-                @item.ProductName
-                @item.ProductDesc
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @product.ProductName |
+                @product.ProductDesc |
+                @product.ProductPrice |
+                @product.IsAgeRestricted |
+                @product.ProductID
+
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductID">Product details</a> |
+                <a asp-controller="Product" asp-action="Edit" asp-route-id="@product.ProductID">Edit Product</a>
             </td>
         </tr>
 }

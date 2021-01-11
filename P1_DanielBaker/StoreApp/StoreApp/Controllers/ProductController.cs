@@ -43,6 +43,43 @@ namespace StoreApp.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Details(Guid id)
+        {
+            ProductInfoViewModel productDetails = _logic.GetProductById(id);
+
+            if (productDetails == null)
+            {
+                ModelState.AddModelError("Failure", "Product does not exist");
+                return View(productDetails);
+            }
+
+            return View(productDetails);
+        }
+
+        public IActionResult Edit(Guid id)
+        {
+            ProductInfoViewModel productToEdit = _logic.GetProductById(id);
+            if (productToEdit == null)
+            {
+                ModelState.AddModelError("Failure", "Product does not exist");
+                return View(productToEdit);
+            }
+
+            return View(productToEdit);
+        }
+
+        public IActionResult EditProduct(ProductInfoViewModel productToEdit)
+        {
+            ProductInfoViewModel editedProduct = _logic.EditProduct(productToEdit);
+
+            if (editedProduct == null)
+            {
+                ModelState.AddModelError("Failure", "Product does not exist");
+                return View("Edit", editedProduct);
+            }
+
+            return View("Details", editedProduct);
+        }
 
 
 

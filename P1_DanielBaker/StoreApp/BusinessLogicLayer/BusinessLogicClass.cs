@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ModelLayer.Models;
 using ModelLayer.ViewModels;
 using RepositoryLayer;
+using System.Linq;
 
 
 namespace BusinessLogicLayer
@@ -146,7 +147,7 @@ namespace BusinessLogicLayer
                 storeViewModels.Add(_mapper.ConvertStoreToStoreInfoViewModel(s));
             }
 
-            storeList.StoreLoactions = storeViewModels;
+            storeList.StoreLocations = storeViewModels;
 
             return storeList;
         }
@@ -196,6 +197,19 @@ namespace BusinessLogicLayer
             return productList;
         }
 
+        public ProductInfoViewModel GetProductById(Guid id)
+        {
+            Product product = _repo.GetProductById(id);
+
+            if (product == null)
+            {
+                return null;
+            }
+
+            ProductInfoViewModel productDetails = _mapper.ConvertProductToProductInfoViewModel(product);
+            return productDetails;
+        }
+
         public ProductInfoViewModel CreateProduct(ProductInfoViewModel newProduct)
         {
             Product product = new Product()
@@ -219,5 +233,119 @@ namespace BusinessLogicLayer
             return newProductInfoViewModel;
         }
 
+
+        public ProductInfoViewModel EditProduct(ProductInfoViewModel productToEdit)
+        {
+            Product product = _repo.GetProductById(productToEdit.ProductID);
+
+            if (product == null)
+            {
+                return null;
+            }
+
+            product.ProductName = productToEdit.ProductName;
+            product.ProductDesc = productToEdit.ProductDesc;
+            product.ProductPrice = productToEdit.ProductPrice;
+            product.IsAgeRestricted = productToEdit.IsAgeRestricted;
+
+            Product editedProduct = _repo.EditProduct(product);
+
+            ProductInfoViewModel editedProductView = _mapper.ConvertProductToProductInfoViewModel(editedProduct);
+
+            return editedProductView;
+        }
+
+        public InventoryListViewModel GetStoreInventory(Guid storeId)
+        {
+            StoreLocation store = _repo.GetStoreById(storeId);
+
+            // TODO: handle this in controller
+            if (store == null)
+            {
+                return null;
+            }
+
+            InventoryListViewModel storeInventory = new InventoryListViewModel();
+
+            List<InventoryInfoViewModel> inventoryViewModels = new List<InventoryInfoViewModel>();
+
+            List<Inventory> inventories = _repo.GetStoreInventory(store);
+
+            foreach (Inventory i in inventories)
+            {
+                inventoryViewModels.Add(_mapper.ConvertInventoryToInventoryInfoViewModel(i));
+            }
+
+            storeInventory.StoreLocation = _mapper.ConvertStoreToStoreInfoViewModel(store);
+            storeInventory.Inventories = inventoryViewModels;
+
+            return storeInventory;
+        }
+
+        public AddInventoryViewModel AddInventory(Guid storeId)
+        {
+            AddInventoryViewModel addInventoryViewModel = new AddInventoryViewModel();
+
+            StoreLocation store = _repo.GetStoreById(storeId);
+
+            // TODO: handle this in controller
+            if (store == null)
+            {
+                return null;
+            }
+
+            //handing products
+            List<Product> products = _repo.GetProductList();
+
+            List<ProductInfoViewModel> productInfoViews = new List<ProductInfoViewModel>();
+
+            foreach (Product p in products)
+            {
+                productInfoViews.Add(_mapper.ConvertProductToProductInfoViewModel(p));
+            }
+
+            //handling inventory for the store
+            List<Inventory> inventories = _repo.GetStoreInventory(store);
+
+            List<InventoryInfoViewModel> inventoryViewModels = new List<InventoryInfoViewModel>();
+            foreach (Inventory i in inventories)
+            {
+                inventoryViewModels.Add(_mapper.ConvertInventoryToInventoryInfoViewModel(i));
+            }
+
+            // filling AddInventoryViewModel
+            addInventoryViewModel.Store = _mapper.ConvertStoreToStoreInfoViewModel(store);
+            addInventoryViewModel.Products = productInfoViews;
+            addInventoryViewModel.Inventory = inventoryViewModels;
+
+            return addInventoryViewModel;
+        }
+
+        public InventoryListViewModel AddNewInventory(Guid inventoryStore, string productName, int qantityAdded)
+        {
+            InventoryListViewModel inventoryList = new InventoryListViewModel();
+
+            Product product = _repo.GetProductByName(productName);
+
+            if (product == null)
+            {
+                return null;
+            }
+
+            StoreLocation store = _repo.GetStoreById(inventoryStore);
+
+            Inventory inventory = new Inventory()
+            {
+                Product = product,
+                StoreLocation = store,
+                ProductQuantity = qantityAdded
+            };
+
+            Inventory newInventory = _repo.AddNewInventory(inventory);
+
+            inventoryList = GetStoreInventory(newInventory.StoreLocation.StoreLocationId);
+
+            return inventoryList;
+        }
     }
 }

@@ -6,6 +6,12 @@
 
 <h1>Index</h1>
 
+<div style="color:red;">@Html.ValidationSummary()</div>
+<div class="row">
+    <!--Show details are saved successfully message-->
+    <div class="col-lg-12">@ViewBag.Message</div>
+</div>
+
 <p>
     <a asp-action="CreateStore">Create New</a>
 </p>
@@ -16,14 +22,16 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var store in Model.StoreLoactions) {
-        <tr>
-            <td>
-                @store.StoreLocationName | @store.StoreLocationAddress
-                <a asp-controller="Shop" asp-action="Details" asp-route-id="@store.StoreLocationId">Store details</a> |
-                <a asp-controller="Shop" asp-action="Edit" asp-route-id="@store.StoreLocationId">Edit Store</a>
-            </td>
-        </tr>
-}
+        @foreach (var store in Model.StoreLocations)
+        {
+            <tr>
+                <td>
+                    @store.StoreLocationName | @store.StoreLocationAddress
+                    <a asp-controller="Shop" asp-action="Store" asp-route-id="@store.StoreLocationId">Shop here!</a>
+                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@store.StoreLocationId">Store details</a> |
+                    <a asp-controller="Shop" asp-action="Edit" asp-route-id="@store.StoreLocationId">Edit Store</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

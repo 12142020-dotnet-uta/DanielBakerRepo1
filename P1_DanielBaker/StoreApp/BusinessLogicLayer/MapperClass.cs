@@ -43,12 +43,27 @@ namespace BusinessLogicLayer
         {
             ProductInfoViewModel productInfoViewModel = new ProductInfoViewModel()
             {
+                ProductID = product.ProductID,
                 ProductName = product.ProductName,
                 ProductDesc = product.ProductDesc,
-                ProductPrice = product.ProductPrice
+                ProductPrice = product.ProductPrice,
+                IsAgeRestricted = product.IsAgeRestricted
             };
 
             return productInfoViewModel;
+        }
+
+        public InventoryInfoViewModel ConvertInventoryToInventoryInfoViewModel(Inventory inventory)
+        {
+            InventoryInfoViewModel infoViewModel = new InventoryInfoViewModel()
+            {
+                InventoryId = inventory.InventoryId,
+                Product = inventory.Product,
+                StoreLocation = inventory.StoreLocation,
+                ProductQuantity = inventory.ProductQuantity
+            };
+
+            return infoViewModel;
         }
 
 

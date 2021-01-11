@@ -8,6 +8,6 @@ namespace ModelLayer.ViewModels
 {
     public class StoreListViewModel
     {
-        public List<StoreInfoViewModel> StoreLoactions { get; set; }
+        public List<StoreInfoViewModel> StoreLocations { get; set; }
     }
 }

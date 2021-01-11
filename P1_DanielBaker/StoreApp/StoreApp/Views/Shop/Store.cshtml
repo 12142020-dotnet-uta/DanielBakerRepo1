@@ -1,0 +1,33 @@
+﻿@model ModelLayer.ViewModels.InventoryListViewModel
+
+@{
+    ViewData["Title"] = Model.StoreLocation.StoreLocationName;
+}
+
+<h1>@Model.StoreLocation.StoreLocationName</h1>
+
+<p>
+    <a asp-controller="Shop" asp-action="AddInventory" asp-route-id="@Model.StoreLocation.StoreLocationId">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var inventory in Model.Inventories) {
+        <tr>
+            <td>
+                @inventory.Product.ProductName
+                @inventory.Product.ProductPrice
+                @inventory.StoreLocation.StoreLocationName
+                @inventory.ProductQuantity
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

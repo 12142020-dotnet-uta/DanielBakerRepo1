@@ -22,6 +22,20 @@ namespace StoreApp.Controllers
         // GET: CustomerController
         public ActionResult Index(CustomerInfoViewModel loggedInView)
         {
+
+            if (loggedInView.CustomerFName == null)
+            {
+                Guid id = new Guid(HttpContext.Session.GetString("customerId"));
+                CustomerInfoViewModel customerInfo = _logic.GetCustomerById(id);
+
+                if (customerInfo == null)
+                {
+                    RedirectToAction("Index", "Home");
+                }
+
+                return View(customerInfo);
+            }
+
             return View(loggedInView);
         }
 
@@ -65,7 +79,13 @@ namespace StoreApp.Controllers
         public ActionResult EditPlayer(CustomerInfoViewModel customerToEdit)
         {
             CustomerInfoViewModel editedCustomer = _logic.EditCustomer(customerToEdit);
-           
+
+            if (editedCustomer == null)
+            {
+                ModelState.AddModelError("Failure", "Customer does not exist");
+                return View("Edit", editedCustomer);
+            }
+
             return View("Details", editedCustomer);
         }
 

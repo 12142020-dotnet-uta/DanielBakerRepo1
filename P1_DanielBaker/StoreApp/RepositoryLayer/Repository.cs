@@ -97,8 +97,6 @@ namespace RepositoryLayer
             return stores.ToList();
         }
 
-
-
         public StoreLocation CreateStore(StoreLocation newStore)
         {
             StoreLocation s = stores.FirstOrDefault(s => s.StoreLocationName == newStore.StoreLocationName);
@@ -171,8 +169,68 @@ namespace RepositoryLayer
             return null;
         }
 
+        public Product GetProductById(Guid id)
+        {
+           Product product = products.FirstOrDefault(p => p.ProductID == id);
+           return product;
+        }
 
+        public Product GetProductByName(string name)
+        {
+            Product product = products.FirstOrDefault(p => p.ProductName == name);
+            return product;
+        }
 
+        public Product EditProduct(Product product)
+        {
+            Product editedProduct = products.FirstOrDefault(p => p.ProductID == product.ProductID);
+            
+            if (editedProduct == null)
+            {
+                return null;
+            }
+
+            editedProduct.ProductName = product.ProductName;
+            editedProduct.ProductDesc = product.ProductDesc;
+            editedProduct.ProductPrice = product.ProductPrice;
+            editedProduct.IsAgeRestricted = product.IsAgeRestricted;
+
+            _context.SaveChanges();
+
+            return editedProduct;
+
+        }
+
+        public List<Inventory> GetStoreInventory(StoreLocation store)
+        {
+            List<Inventory> storeInventory = inventories
+                .Include(i => i.StoreLocation)
+                .Include(i => i.Product)
+                .Where(i => i.StoreLocation.StoreLocationId == store.StoreLocationId).ToList();
+           
+            return storeInventory;
+        }
+
+        public Inventory AddNewInventory(Inventory addInventory)
+        {
+            Inventory inventory = inventories.FirstOrDefault(i => i.Product.ProductID == addInventory.Product.ProductID
+                                       && i.StoreLocation.StoreLocationId == addInventory.StoreLocation.StoreLocationId);
+            if (inventory == null)
+            {
+                Inventory addedInventory = new Inventory()
+                {
+                    Product = addInventory.Product,
+                    StoreLocation = addInventory.StoreLocation,
+                    ProductQuantity = addInventory.ProductQuantity
+                };
+                inventories.Add(addedInventory);
+                _context.SaveChanges();
+                return addedInventory;
+            }
+            inventory.ProductQuantity += addInventory.ProductQuantity;
+            _context.SaveChanges();
+            return addInventory;
+        }
 
 
 
