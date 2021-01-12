@@ -425,6 +425,7 @@ namespace RepositoryLayer
             Order checkOutOrder = orders.FirstOrDefault(o => o.OrderId == cart.OrderId);
             checkOutOrder.isCart = false;
             checkOutOrder.isOrdered = true;
+            checkOutOrder.OrderTime = DateTime.Now;
 
             _context.SaveChanges();
             return checkOutOrder;

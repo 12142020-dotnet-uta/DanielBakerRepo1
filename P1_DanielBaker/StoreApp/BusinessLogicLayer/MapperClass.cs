@@ -76,7 +76,8 @@ namespace BusinessLogicLayer
                 ProductsInOrder = cart.ProductsInOrder,
                 TotalPrice = cart.TotalPrice,
                 isCart = cart.isCart,
-                isOrdered = cart.isOrdered
+                isOrdered = cart.isOrdered,
+                OrderTime = cart.OrderTime
             };
 
             return cartInfoViewModel;

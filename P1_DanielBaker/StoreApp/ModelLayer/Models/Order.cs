@@ -25,7 +25,7 @@ namespace ModelLayer.Models
 
         public bool isCart { get; set; } = false;
 
-
+        public DateTime? OrderTime { get; set; }
 
         public Order(){}
 

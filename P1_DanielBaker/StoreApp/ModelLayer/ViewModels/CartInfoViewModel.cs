@@ -29,6 +29,9 @@ namespace ModelLayer.ViewModels
 
         public bool isCart { get; set; } = false;
 
+        public DateTime? OrderTime { get; set; }
+
+
         public int error { get; set; } = 0;
 
         public string errorMessage { get; set; }
