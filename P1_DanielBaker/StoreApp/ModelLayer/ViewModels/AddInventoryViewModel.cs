@@ -15,7 +15,7 @@ namespace ModelLayer.ViewModels
         public List<InventoryInfoViewModel> Inventory { get; set; }
 
         [Required]
-        
+        [Display(Name = "Product Name")]
         public string ProductName { get; set; }
        
         [Required]

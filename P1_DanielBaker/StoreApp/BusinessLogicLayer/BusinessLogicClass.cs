@@ -379,7 +379,10 @@ namespace BusinessLogicLayer
                 }
             }
 
-            //TODO: Get list of order lines
+
+            List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(cart);
+
+            cart.ProductsInOrder = orderLineDetails;
 
             CartInfoViewModel cartInfo = _mapper.ConvertOrderToCartInfoViewModel(cart);
 
@@ -406,6 +409,8 @@ namespace BusinessLogicLayer
 
             foreach (Order cart in customerCarts)
             {
+                List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(cart);
+                cart.ProductsInOrder = orderLineDetails;
                 carts.Add(_mapper.ConvertOrderToCartInfoViewModel(cart));
             }
 
@@ -416,6 +421,7 @@ namespace BusinessLogicLayer
 
         public CartInfoViewModel AddToCart(string productName, int quantity, Guid storeId, Guid customerId)
         {
+
             StoreLocation store = _repo.GetStoreById(storeId);
             Customer customer = _repo.GetCustomerById(customerId);
             Order cart = _repo.GetOrderByStoreAndCustomer(store.StoreLocationId, customer.CustomerID);
@@ -439,6 +445,7 @@ namespace BusinessLogicLayer
             }
 
             Product product = _repo.GetProductByName(productName);
+            
             Inventory inventory = _repo.GetInventoryByStoreAndName(store, product);
 
             if (store == null || customer == null || product == null || inventory == null)
@@ -446,11 +453,148 @@ namespace BusinessLogicLayer
                 return null;
             }
 
-            OrderLineDetails orderLine = _repo.AddOrderLineDetail(inventory, cart, quantity);
+            try
+            {
+                OrderLineDetails orderLine = _repo.AddOrderLineDetail(inventory, cart, quantity);
+            }
+            catch (Exception e)
+            {
+                CartInfoViewModel badQuantity = new CartInfoViewModel()
+                {
+                    error = 1,
+                    errorMessage = e.Message
+                };
+                return badQuantity;
+            }
+           
+
+            cart = _repo.UpdateCartPrice(cart);
+
+            List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(cart);
+
+            cart.ProductsInOrder = orderLineDetails;
 
 
             CartInfoViewModel cartInfo = _mapper.ConvertOrderToCartInfoViewModel(cart);
+
             return cartInfo;
         }
+
+
+        public CartInfoViewModel CheckoutCart(Guid customerId, Guid cartId)
+        {
+            // should validate customer somewhere
+            Customer customer = _repo.GetCustomerById(customerId);
+            Order order = _repo.GetOrderById(cartId);
+            StoreLocation store = order.Store;
+            List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(order);
+            List<Inventory> inventory = _repo.GetStoreInventory(store);
+
+            try
+            {
+                _repo.RemoveInventoryBasedOnOrder(orderLineDetails, inventory);
+            }
+            catch (Exception e)
+            {
+                CartInfoViewModel badQuantity = new CartInfoViewModel()
+                {
+                    Store = _mapper.ConvertStoreToStoreInfoViewModel(store),
+                    error = 1,
+                    errorMessage = e.Message
+                };
+                return badQuantity;
+            }
+           
+
+            order.ProductsInOrder = orderLineDetails;
+
+            order = _repo.CheckoutCart(order);
+
+            CartInfoViewModel orderInfo = _mapper.ConvertOrderToCartInfoViewModel(order);
+
+            return orderInfo;
+        }
+
+
+        public CartInfoViewModel GetPastOrderById(Guid orderId)
+        {
+            Order order = _repo.GetOrderById(orderId);
+
+            if (order == null)
+            {
+                return null;
+            }
+
+            List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(order);
+
+            order.ProductsInOrder = orderLineDetails;
+
+            CartInfoViewModel orderInfo = _mapper.ConvertOrderToCartInfoViewModel(order);
+
+            return orderInfo;
+        }
+
+        public CartListViewModel GetUserPastOrders(Guid customerId)
+        {
+            CartListViewModel orderList = new CartListViewModel();
+
+            List<CartInfoViewModel> orders = new List<CartInfoViewModel>();
+
+            Customer customer = _repo.GetCustomerById(customerId);
+
+            if (customer == null)
+            {
+                return null;
+            }
+
+            List<Order> customerOrders = _repo.GetOrdersByCustomerId(customer.CustomerID);
+
+            foreach (Order order in customerOrders)
+            {
+                List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(order);
+                order.ProductsInOrder = orderLineDetails;
+                orders.Add(_mapper.ConvertOrderToCartInfoViewModel(order));
+            }
+
+            orderList.CurrentCarts = orders;
+
+            return orderList;
+        }
+
+        public CartListViewModel GetStorePastOrders(Guid StoreId)
+        {
+            CartListViewModel orderList = new CartListViewModel();
+
+            List<CartInfoViewModel> orders = new List<CartInfoViewModel>();
+
+            StoreLocation store = _repo.GetStoreById(StoreId);
+
+            if (store == null)
+            {
+                return null;
+            }
+
+            List<Order> storeOrders = _repo.GetOrdersByStoreId(store.StoreLocationId);
+
+            foreach (Order order in storeOrders)
+            {
+                List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(order);
+                order.ProductsInOrder = orderLineDetails;
+
+                orders.Add(_mapper.ConvertOrderToCartInfoViewModel(order));
+            }
+
+            orderList.CurrentCarts = orders;
+
+            return orderList;
+        }
+
+
+
+
+
+
+
+
     }
 }

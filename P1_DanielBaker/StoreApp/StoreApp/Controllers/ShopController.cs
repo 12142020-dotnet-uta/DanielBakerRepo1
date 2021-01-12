@@ -106,6 +106,7 @@ namespace StoreApp.Controllers
             return View("Store", currentStoreInventory);
         }
 
+        // handle null
         public IActionResult ViewCart(Guid StoreId)
         {
             string sessionId = HttpContext.Session.GetString("customerId");
@@ -113,7 +114,7 @@ namespace StoreApp.Controllers
             if (sessionId == null)
             {
                 ModelState.AddModelError("Failure", "User is not logged in");
-                return Content("Failure", "User is not logged in");
+                return View("Index");
             }
 
             Guid customerId = new Guid(sessionId);
@@ -123,12 +124,13 @@ namespace StoreApp.Controllers
             if (cartView == null)
             {
                 ModelState.AddModelError("Failure", "Customer or store does not exist");
-                return Content("BAD");
+                return View("Index");
             }
 
             return View(cartView);
         }
 
+        // handle null
         public IActionResult ViewCarts()
         {
             string sessionId = HttpContext.Session.GetString("customerId");
@@ -136,7 +138,7 @@ namespace StoreApp.Controllers
             if (sessionId == null)
             {
                 ModelState.AddModelError("Failure", "User is not logged in");
-                return Content("Failure", "User is not logged in");
+                return View("Index");
             }
 
             Guid customerId = new Guid(sessionId);
@@ -146,7 +148,7 @@ namespace StoreApp.Controllers
             if (cartList == null)
             {
                 ModelState.AddModelError("Failure", "Customer does not exist");
-                return Content("BAD");
+                return View("Index");
             }
 
             return View(cartList);
@@ -156,23 +158,111 @@ namespace StoreApp.Controllers
         {
             string sessionId = HttpContext.Session.GetString("customerId");
 
-            if (sessionId == null)
-            {
-                ModelState.AddModelError("Failure", "User is not logged in");
-                return Content("Failure", "User is not logged in");
-            }
-
             Guid customerId = new Guid(sessionId);
 
             CartInfoViewModel updatedCart = _logic.AddToCart(cart.ProductName, cart.QuantityAdded, cart.StoreId, customerId);
 
+
             if (updatedCart == null)
             {
-                ModelState.AddModelError("Failure", "Customer or store does not exist");
-                return Content("Customer or store does not exist");
+                ModelState.AddModelError("Failure", "Customer, Product, Store or Inventory does not exist");
+                ShoppingListViewModel storeInventory = _logic.GetStoreInventory(cart.StoreId);
+                return View("Store", storeInventory);
+            }
+
+            // if you are trying too add too much quantity
+            if (updatedCart.error == 1)
+            {
+                ModelState.AddModelError("Failure", $"{updatedCart.errorMessage}");
+                ShoppingListViewModel storeInventory = _logic.GetStoreInventory(cart.StoreId);
+                return View("Store", storeInventory);
             }
 
             return View("ViewCart", updatedCart);
+        }
+
+        public IActionResult Checkout(Guid cartId)
+        {
+            string sessionId = HttpContext.Session.GetString("customerId");
+
+            if (sessionId == null)
+            {
+                ModelState.AddModelError("Failure", "User is not logged in");
+                return View("Index");
+            }
+
+            Guid customerId = new Guid(sessionId);
+
+            CartInfoViewModel checkedoutOrder = _logic.CheckoutCart(customerId, cartId);
+
+            if (checkedoutOrder.error == 1)
+            {
+                ModelState.AddModelError("Failure", $"{checkedoutOrder.errorMessage}");
+                return View("Cart", checkedoutOrder.Store.StoreLocationId);
+            }
+
+            return RedirectToAction("ViewPastOrder", checkedoutOrder.OrderId);
+        }
+
+        // handle null
+        public IActionResult ViewPastOrder(Guid orderId)
+        {
+            string sessionId = HttpContext.Session.GetString("customerId");
+
+            if (sessionId == null)
+            {
+                ModelState.AddModelError("Failure", "User is not logged in");
+                return View("Index");
+            }
+
+            Guid customerId = new Guid(sessionId);
+
+            CartInfoViewModel pastOrder = _logic.GetPastOrderById(orderId);
+
+            if (pastOrder == null)
+            {
+                ModelState.AddModelError("Failure", "Customer or store does not exist");
+                return View("Index");
+            }
+
+            return View(pastOrder);
+        }
+
+        // handle null
+        // look at routing
+        public IActionResult ViewPastOrders()
+        {
+            string sessionId = HttpContext.Session.GetString("customerId");
+
+            if (sessionId == null)
+            {
+                ModelState.AddModelError("Failure", "User is not logged in");
+                return View("Index");
+            }
+
+            Guid customerId = new Guid(sessionId);
+
+            CartListViewModel orderList = _logic.GetUserPastOrders(customerId);
+
+            if (orderList == null)
+            {
+                ModelState.AddModelError("Failure", "Customer does not exist");
+                return View("Index");
+            }
+
+            return View(orderList);
+        }
+
+        public IActionResult ViewStorePastOrders(Guid StoreId)
+        {
+            CartListViewModel orderList = _logic.GetStorePastOrders(StoreId);
+            if (orderList == null)
+            {
+                ModelState.AddModelError("Failure", "Store does not exist ");
+                return View(orderList);
+            }
+
+            return View(orderList);
         }
 
     }

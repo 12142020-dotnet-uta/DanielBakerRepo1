@@ -73,6 +73,7 @@ namespace BusinessLogicLayer
                 OrderId = cart.OrderId,
                 Customer = ConvertCustomerToCustomerInfoViewModel(cart.Customer),
                 Store = ConvertStoreToStoreInfoViewModel(cart.Store),
+                ProductsInOrder = cart.ProductsInOrder,
                 TotalPrice = cart.TotalPrice,
                 isCart = cart.isCart,
                 isOrdered = cart.isOrdered

@@ -18,24 +18,44 @@
 <p>
     <a asp-controller="Shop" asp-action="ViewCarts">View All Your Carts</a>
 </p>
+<p>
+    <a asp-controller="Shop" asp-action="ViewPastOrders">View Past Orders</a>
+</p>
 <table class="table">
     <thead>
         <tr>
-            <th></th>
+            <th>
+                Store Name
+            </th>
+            <th>
+                Store Location
+            </th>
+            <th>
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var store in Model.StoreLocations)
         {
-            <tr>
-                <td>
-                    @store.StoreLocationName | @store.StoreLocationAddress
-                    <a asp-controller="Shop" asp-action="Store" asp-route-id="@store.StoreLocationId">Shop here!</a> |
-                    <a asp-controller="Shop" asp-action="ViewCart" asp-route-StoreId="@store.StoreLocationId">View Cart</a> |
-                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@store.StoreLocationId">Store details</a> |
-                    <a asp-controller="Shop" asp-action="Edit" asp-route-id="@store.StoreLocationId">Edit Store</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @store.StoreLocationName
+                
+            </td>
+            <td>
+                @store.StoreLocationAddress
+            </td>
+            <td>
+                <a asp-controller="Shop" asp-action="Store" asp-route-id="@store.StoreLocationId">Shop here!</a> |
+                <a asp-controller="Shop" asp-action="ViewCart" asp-route-StoreId="@store.StoreLocationId">View Cart</a> |
+                <a asp-controller="Shop" asp-action="ViewStorePastOrders" asp-route-StoreId="@store.StoreLocationId">View Stores Past Orders</a> |
+                <a asp-controller="Shop" asp-action="Details" asp-route-id="@store.StoreLocationId">Store details</a> |
+                <a asp-controller="Shop" asp-action="Edit" asp-route-id="@store.StoreLocationId">Edit Store</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
+
+<a asp-controller="Customer" asp-action="Index">Back To Homepage</a>

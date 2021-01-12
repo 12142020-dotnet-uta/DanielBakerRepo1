@@ -28,5 +28,9 @@ namespace ModelLayer.ViewModels
         public bool isOrdered { get; set; } = false;
 
         public bool isCart { get; set; } = false;
+
+        public int error { get; set; } = 0;
+
+        public string errorMessage { get; set; }
     }
 }

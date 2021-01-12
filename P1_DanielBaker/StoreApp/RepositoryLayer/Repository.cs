@@ -244,7 +244,7 @@ namespace RepositoryLayer
 
         public Order CreateOrder(Order order)
         {
-            Order o = orders.FirstOrDefault(c => c.Store == order.Store && c.Customer == order.Customer);
+            Order o = orders.FirstOrDefault(c => c.Store == order.Store && c.Customer == order.Customer && c.isCart == true);
             
             if (o == null)
             {
@@ -262,12 +262,23 @@ namespace RepositoryLayer
             return null;
         }
 
+        public Order GetOrderById(Guid id)
+        {
+            Order order = orders
+                .Include(o => o.Store)
+                .Include(o => o.Customer)
+                .Where(o => o.OrderId == id)
+                .FirstOrDefault();
+
+            return order;
+        }
+
         public Order GetOrderByStoreAndCustomer(Guid storeId, Guid customerId)
         {
             Order order = orders
                 .Include(o => o.Store)
                 .Include(o => o.Customer)
-                .Where(o => o.Store.StoreLocationId == storeId && o.Store.StoreLocationId == storeId)
+                .Where(o => o.Store.StoreLocationId == storeId && o.isCart == true)
                 .FirstOrDefault();
 
             return order;
@@ -284,10 +295,34 @@ namespace RepositoryLayer
             return orderList;
         }
 
+
+        public List<Order> GetOrdersByCustomerId(Guid customerId)
+        {
+            List<Order> orderList = orders
+                .Include(o => o.Customer)
+                .Include(o => o.Store)
+                .Where(o => o.Customer.CustomerID == customerId && o.isCart == false && o.isOrdered == true)
+                .ToList();
+
+            return orderList;
+        }
+
+        public List<Order> GetOrdersByStoreId(Guid storeId)
+        {
+            List<Order> orderList = orders
+                .Include(o => o.Customer)
+                .Include(o => o.Store)
+                .Where(o => o.Store.StoreLocationId == storeId && o.isCart == false && o.isOrdered == true)
+                .ToList();
+
+            return orderList;
+        }
+
         public OrderLineDetails AddOrderLineDetail(Inventory inventory, Order cart, int quantity)
         {
             OrderLineDetails orderLineDetail = orderLines
                 .Include(o => o.Item)
+                .ThenInclude(i => i.Product)
                 .Include(o => o.Order)
                 .Where(o => o.Item.InventoryId == inventory.InventoryId && o.Order.OrderId == cart.OrderId)
                 .FirstOrDefault();
@@ -300,6 +335,11 @@ namespace RepositoryLayer
                     Order = cart,
                     OrderDetailsQuantity = quantity,
                 };
+
+                if (orderLine.OrderDetailsQuantity > inventory.ProductQuantity)
+                {
+                    throw new Exception($"Ordering too many {inventory.Product.ProductName}");
+                }
                 double totalCost = (double)orderLine.Item.Product.ProductPrice * orderLine.OrderDetailsQuantity;
                 orderLine.OrderDetailsPrice = (decimal)totalCost;
 
@@ -310,11 +350,84 @@ namespace RepositoryLayer
 
             orderLineDetail.OrderDetailsQuantity += quantity;
 
+            if (orderLineDetail.OrderDetailsQuantity > inventory.ProductQuantity)
+            {
+                throw new Exception($"Ordering too many {inventory.Product.ProductName}");
+            }
+
             double cost = (double)orderLineDetail.Item.Product.ProductPrice * orderLineDetail.OrderDetailsQuantity;
             orderLineDetail.OrderDetailsPrice = (decimal)cost;
             _context.SaveChanges();
 
             return orderLineDetail;
+        }
+
+        public List<OrderLineDetails> GetOrderLineListByCart(Order cart)
+        {
+            List<OrderLineDetails> orderLineDetails = orderLines
+                .Include(o => o.Order)
+                .Include(o => o.Item)
+                .ThenInclude(i => i.Product)
+                .Where(o => o.Order.OrderId == cart.OrderId)
+                .ToList();
+
+            return orderLineDetails;
+        }
+
+        public Order UpdateCartPrice(Order cart)
+        {
+            Order editCart = orders.FirstOrDefault(o => o.OrderId == cart.OrderId);
+           
+            if (editCart == null)
+            {
+                return null;
+            }
+
+            List<OrderLineDetails> orderLineDetails = orderLines
+                .Include(o => o.Order)
+                .Where(o => o.Order.OrderId == editCart.OrderId)
+                .ToList();
+
+            editCart.TotalPrice = 0;
+
+            foreach (OrderLineDetails orderLine in orderLineDetails)
+            {
+                editCart.TotalPrice += orderLine.OrderDetailsPrice;
+            }
+
+            _context.SaveChanges();
+            return editCart;
+        }
+
+        public void RemoveInventoryBasedOnOrder(List<OrderLineDetails> orderLines, List<Inventory> inventory)
+        {
+      
+            foreach (Inventory i in inventory)
+            {
+                foreach (OrderLineDetails orderLine in orderLines)
+                {
+                    if (orderLine.Item.InventoryId == i.InventoryId)
+                    {
+                        if (i.ProductQuantity < orderLine.OrderDetailsQuantity)
+                        {
+                            throw new Exception($"Buying too many {i.Product.ProductName}");
+                        }
+
+                        i.ProductQuantity -= orderLine.OrderDetailsQuantity;
+                    }
+                }
+            }
+            _context.SaveChanges();
+        }
+
+        public Order CheckoutCart(Order cart)
+        {
+            Order checkOutOrder = orders.FirstOrDefault(o => o.OrderId == cart.OrderId);
+            checkOutOrder.isCart = false;
+            checkOutOrder.isOrdered = true;
+
+            _context.SaveChanges();
+            return checkOutOrder;
         }
 
 
