@@ -211,6 +211,16 @@ namespace RepositoryLayer
             return storeInventory;
         }
 
+        public Inventory GetInventoryByStoreAndName(StoreLocation store, Product product)
+        {
+            Inventory newInventory = inventories
+                .Include(i => i.StoreLocation)
+                .Include(i => i.Product)
+                .Where(i => i.StoreLocation.StoreLocationId == store.StoreLocationId && i.Product.ProductID == product.ProductID)
+                .FirstOrDefault();
+            return newInventory;
+        }
+
         public Inventory AddNewInventory(Inventory addInventory)
         {
             Inventory inventory = inventories.FirstOrDefault(i => i.Product.ProductID == addInventory.Product.ProductID
@@ -232,7 +242,80 @@ namespace RepositoryLayer
             return addInventory;
         }
 
+        public Order CreateOrder(Order order)
+        {
+            Order o = orders.FirstOrDefault(c => c.Store == order.Store && c.Customer == order.Customer);
+            
+            if (o == null)
+            {
+                Order newOrder = new Order()
+                {
+                    Store = order.Store,
+                    Customer = order.Customer,
+                    isCart = order.isCart
+                };
+                orders.Add(newOrder);
+                _context.SaveChanges();
+                return newOrder;
+            }
 
+            return null;
+        }
+
+        public Order GetOrderByStoreAndCustomer(Guid storeId, Guid customerId)
+        {
+            Order order = orders
+                .Include(o => o.Store)
+                .Include(o => o.Customer)
+                .Where(o => o.Store.StoreLocationId == storeId && o.Store.StoreLocationId == storeId)
+                .FirstOrDefault();
+
+            return order;
+        }
+
+        public List<Order> GetCartsByCustomerId(Guid customerId)
+        {
+            List<Order> orderList = orders
+                .Include(o => o.Customer)
+                .Include(o => o.Store)
+                .Where(o => o.Customer.CustomerID == customerId && o.isCart == true && o.isOrdered == false)
+                .ToList();
+
+            return orderList;
+        }
+
+        public OrderLineDetails AddOrderLineDetail(Inventory inventory, Order cart, int quantity)
+        {
+            OrderLineDetails orderLineDetail = orderLines
+                .Include(o => o.Item)
+                .Include(o => o.Order)
+                .Where(o => o.Item.InventoryId == inventory.InventoryId && o.Order.OrderId == cart.OrderId)
+                .FirstOrDefault();
+
+            if (orderLineDetail == null)
+            {
+                OrderLineDetails orderLine = new OrderLineDetails()
+                {
+                    Item = inventory,
+                    Order = cart,
+                    OrderDetailsQuantity = quantity,
+                };
+                double totalCost = (double)orderLine.Item.Product.ProductPrice * orderLine.OrderDetailsQuantity;
+                orderLine.OrderDetailsPrice = (decimal)totalCost;
+
+                orderLines.Add(orderLine);
+                _context.SaveChanges();
+                return orderLine;
+            }
+
+            orderLineDetail.OrderDetailsQuantity += quantity;
+
+            double cost = (double)orderLineDetail.Item.Product.ProductPrice * orderLineDetail.OrderDetailsQuantity;
+            orderLineDetail.OrderDetailsPrice = (decimal)cost;
+            _context.SaveChanges();
+
+            return orderLineDetail;
+        }
 
 
     }

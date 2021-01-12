@@ -66,6 +66,22 @@ namespace BusinessLogicLayer
             return infoViewModel;
         }
 
+        public CartInfoViewModel ConvertOrderToCartInfoViewModel(Order cart)
+        {
+            CartInfoViewModel cartInfoViewModel = new CartInfoViewModel()
+            {
+                OrderId = cart.OrderId,
+                Customer = ConvertCustomerToCustomerInfoViewModel(cart.Customer),
+                Store = ConvertStoreToStoreInfoViewModel(cart.Store),
+                TotalPrice = cart.TotalPrice,
+                isCart = cart.isCart,
+                isOrdered = cart.isOrdered
+            };
+
+            return cartInfoViewModel;
+
+        }
+
 
 
     }

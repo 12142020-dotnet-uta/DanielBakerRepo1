@@ -1,4 +1,4 @@
-﻿@model ModelLayer.ViewModels.InventoryListViewModel
+﻿@model ModelLayer.ViewModels.ShoppingListViewModel
 
 @{
     ViewData["Title"] = Model.StoreLocation.StoreLocationName;
@@ -7,7 +7,7 @@
 <h1>@Model.StoreLocation.StoreLocationName</h1>
 
 <p>
-    <a asp-controller="Shop" asp-action="AddInventory" asp-route-id="@Model.StoreLocation.StoreLocationId">Create New</a>
+    <a asp-controller="Shop" asp-action="AddInventory" asp-route-id="@Model.StoreLocation.StoreLocationId">Add Inventory</a>
 </p>
 <table class="table">
     <thead>
@@ -16,18 +16,40 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var inventory in Model.Inventories) {
-        <tr>
-            <td>
-                @inventory.Product.ProductName
-                @inventory.Product.ProductPrice
-                @inventory.StoreLocation.StoreLocationName
-                @inventory.ProductQuantity
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var inventory in Model.Inventories)
+        {
+            <tr>
+                <td>
+                    @inventory.Product.ProductName
+                    @inventory.Product.ProductPrice
+                    @inventory.StoreLocation.StoreLocationName
+                    @inventory.ProductQuantity
+                </td>
+            </tr>
+        }
+
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="AddToCart">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="ProductName" class="control-label"></label>
+                        <input asp-for="ProductName" class="form-control" />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="QuantityAdded" class="control-label"></label>
+                        <input asp-for="QuantityAdded" class="form-control" />
+                        <span asp-validation-for="QuantityAdded" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" asp-for="StoreId" value="@Model.StoreLocation.StoreLocationId" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add to Inventory" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </tbody>
 </table>

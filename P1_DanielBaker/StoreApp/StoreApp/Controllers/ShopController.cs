@@ -79,7 +79,7 @@ namespace StoreApp.Controllers
 
         public IActionResult Store(Guid id)
         {
-            InventoryListViewModel storeInventory = _logic.GetStoreInventory(id);
+            ShoppingListViewModel storeInventory = _logic.GetStoreInventory(id);
             return View(storeInventory);
         }
 
@@ -97,7 +97,7 @@ namespace StoreApp.Controllers
 
         public IActionResult AddNewInventory(AddInventoryViewModel newInventory)
         {
-            InventoryListViewModel currentStoreInventory = _logic.AddNewInventory(newInventory.StoreId, newInventory.ProductName, newInventory.QuantityAdded);
+            ShoppingListViewModel currentStoreInventory = _logic.AddNewInventory(newInventory.StoreId, newInventory.ProductName, newInventory.QuantityAdded);
             if (currentStoreInventory == null)
             {
                 ModelState.AddModelError("Failure", "Product does not exist");
@@ -106,7 +106,74 @@ namespace StoreApp.Controllers
             return View("Store", currentStoreInventory);
         }
 
+        public IActionResult ViewCart(Guid StoreId)
+        {
+            string sessionId = HttpContext.Session.GetString("customerId");
 
+            if (sessionId == null)
+            {
+                ModelState.AddModelError("Failure", "User is not logged in");
+                return Content("Failure", "User is not logged in");
+            }
+
+            Guid customerId = new Guid(sessionId);
+
+            CartInfoViewModel cartView = _logic.GetCustomerCartAtStore(StoreId, customerId);
+
+            if (cartView == null)
+            {
+                ModelState.AddModelError("Failure", "Customer or store does not exist");
+                return Content("BAD");
+            }
+
+            return View(cartView);
+        }
+
+        public IActionResult ViewCarts()
+        {
+            string sessionId = HttpContext.Session.GetString("customerId");
+
+            if (sessionId == null)
+            {
+                ModelState.AddModelError("Failure", "User is not logged in");
+                return Content("Failure", "User is not logged in");
+            }
+
+            Guid customerId = new Guid(sessionId);
+
+            CartListViewModel cartList = _logic.GetUserCartList(customerId);
+
+            if (cartList == null)
+            {
+                ModelState.AddModelError("Failure", "Customer does not exist");
+                return Content("BAD");
+            }
+
+            return View(cartList);
+        }
+
+        public IActionResult AddToCart(ShoppingListViewModel cart)
+        {
+            string sessionId = HttpContext.Session.GetString("customerId");
+
+            if (sessionId == null)
+            {
+                ModelState.AddModelError("Failure", "User is not logged in");
+                return Content("Failure", "User is not logged in");
+            }
+
+            Guid customerId = new Guid(sessionId);
+
+            CartInfoViewModel updatedCart = _logic.AddToCart(cart.ProductName, cart.QuantityAdded, cart.StoreId, customerId);
+
+            if (updatedCart == null)
+            {
+                ModelState.AddModelError("Failure", "Customer or store does not exist");
+                return Content("Customer or store does not exist");
+            }
+
+            return View("ViewCart", updatedCart);
+        }
 
     }
 }

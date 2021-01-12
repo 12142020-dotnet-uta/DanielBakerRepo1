@@ -39,7 +39,7 @@ namespace BusinessLogicLayer
             CustomerInfoViewModel currentCustomerViewModel = _mapper.ConvertCustomerToCustomerInfoViewModel(c);
 
             return currentCustomerViewModel;
-            
+
         }
 
         public CustomerInfoViewModel CreateUser(CreateCustomerViewModel createdPlayer)
@@ -163,7 +163,7 @@ namespace BusinessLogicLayer
             }
 
             StoreInfoViewModel storeViewToEdit = _mapper.ConvertStoreToStoreInfoViewModel(storeToEdit);
-            
+
             return storeViewToEdit;
         }
 
@@ -255,7 +255,7 @@ namespace BusinessLogicLayer
             return editedProductView;
         }
 
-        public InventoryListViewModel GetStoreInventory(Guid storeId)
+        public ShoppingListViewModel GetStoreInventory(Guid storeId)
         {
             StoreLocation store = _repo.GetStoreById(storeId);
 
@@ -265,7 +265,7 @@ namespace BusinessLogicLayer
                 return null;
             }
 
-            InventoryListViewModel storeInventory = new InventoryListViewModel();
+            ShoppingListViewModel storeInventory = new ShoppingListViewModel();
 
             List<InventoryInfoViewModel> inventoryViewModels = new List<InventoryInfoViewModel>();
 
@@ -314,6 +314,7 @@ namespace BusinessLogicLayer
             }
 
             // filling AddInventoryViewModel
+            // TODO: Mapper this
             addInventoryViewModel.Store = _mapper.ConvertStoreToStoreInfoViewModel(store);
             addInventoryViewModel.Products = productInfoViews;
             addInventoryViewModel.Inventory = inventoryViewModels;
@@ -321,9 +322,9 @@ namespace BusinessLogicLayer
             return addInventoryViewModel;
         }
 
-        public InventoryListViewModel AddNewInventory(Guid inventoryStore, string productName, int qantityAdded)
+        public ShoppingListViewModel AddNewInventory(Guid inventoryStore, string productName, int qantityAdded)
         {
-            InventoryListViewModel inventoryList = new InventoryListViewModel();
+            ShoppingListViewModel inventoryList = new ShoppingListViewModel();
 
             Product product = _repo.GetProductByName(productName);
 
@@ -346,6 +347,110 @@ namespace BusinessLogicLayer
             inventoryList = GetStoreInventory(newInventory.StoreLocation.StoreLocationId);
 
             return inventoryList;
+        }
+
+        public CartInfoViewModel GetCustomerCartAtStore(Guid storeId, Guid customerId)
+        {
+            StoreLocation store = _repo.GetStoreById(storeId);
+            Customer customer = _repo.GetCustomerById(customerId);
+
+            if (store == null || customer == null)
+            {
+                return null;
+            }
+
+            Order cart = _repo.GetOrderByStoreAndCustomer(store.StoreLocationId, customer.CustomerID);
+
+            // TODO: creating new order if order doesnt exist. need to abstract out
+            if (cart == null)
+            {
+                Order newCart = new Order()
+                {
+                    Store = store,
+                    Customer = customer,
+                    isCart = true
+                };
+
+                cart = _repo.CreateOrder(newCart);
+
+                if (cart == null)
+                {
+                    return null;
+                }
+            }
+
+            //TODO: Get list of order lines
+
+            CartInfoViewModel cartInfo = _mapper.ConvertOrderToCartInfoViewModel(cart);
+
+
+            return cartInfo;
+
+
+        }
+
+        public CartListViewModel GetUserCartList(Guid customerId)
+        {
+            CartListViewModel cartList = new CartListViewModel();
+
+            List<CartInfoViewModel> carts = new List<CartInfoViewModel>();
+
+            Customer customer = _repo.GetCustomerById(customerId);
+
+            if (customer == null)
+            {
+                return null;
+            }
+
+            List<Order> customerCarts = _repo.GetCartsByCustomerId(customer.CustomerID);
+
+            foreach (Order cart in customerCarts)
+            {
+                carts.Add(_mapper.ConvertOrderToCartInfoViewModel(cart));
+            }
+
+            cartList.CurrentCarts = carts;
+
+            return cartList;
+        }
+
+        public CartInfoViewModel AddToCart(string productName, int quantity, Guid storeId, Guid customerId)
+        {
+            StoreLocation store = _repo.GetStoreById(storeId);
+            Customer customer = _repo.GetCustomerById(customerId);
+            Order cart = _repo.GetOrderByStoreAndCustomer(store.StoreLocationId, customer.CustomerID);
+
+            // TODO: creating new order if order doesnt exist. need to abstract out
+            if (cart == null)
+            {
+                Order newCart = new Order()
+                {
+                    Store = store,
+                    Customer = customer,
+                    isCart = true
+                };
+
+                cart = _repo.CreateOrder(newCart);
+
+                if (cart == null)
+                {
+                    return null;
+                }
+            }
+
+            Product product = _repo.GetProductByName(productName);
+            Inventory inventory = _repo.GetInventoryByStoreAndName(store, product);
+
+            if (store == null || customer == null || product == null || inventory == null)
+            {
+                return null;
+            }
+
+            OrderLineDetails orderLine = _repo.AddOrderLineDetail(inventory, cart, quantity);
+
+
+            CartInfoViewModel cartInfo = _mapper.ConvertOrderToCartInfoViewModel(cart);
+            return cartInfo;
         }
     }
 }

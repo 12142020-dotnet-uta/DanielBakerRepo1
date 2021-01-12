@@ -1,0 +1,27 @@
+﻿@model ModelLayer.ViewModels.CartListViewModel
+
+@{
+    ViewData["Title"] = "ViewCarts";
+}
+
+<h1>ViewCarts</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var cart in Model.CurrentCarts) {
+        <tr>
+            <td>
+                @cart.Store.StoreLocationName
+                @cart.ProductsInOrder.Count
+                @cart.TotalPrice
+                <a asp-controller="Shop" asp-action="ViewCart" asp-route-StoreId="@cart.Store.StoreLocationId">View Cart</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
