@@ -591,7 +591,32 @@ namespace BusinessLogicLayer
 
 
 
+        public CartInfoViewModel DeleteOrderLineItem(Guid orderLineId)
+        {
+            Order order = _repo.GetCartByOrderLineId(orderLineId);
 
+            if (order == null)
+            {
+                return null;
+            }
+
+            bool isDeleted = _repo.DeleteOrderLineById(orderLineId);
+
+            if (isDeleted == false)
+            {
+                return null;
+            }
+
+            List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(order);
+
+            order.ProductsInOrder = orderLineDetails;
+
+            order = _repo.UpdateCartPrice(order);
+
+            CartInfoViewModel orderInfo = _mapper.ConvertOrderToCartInfoViewModel(order);
+
+            return orderInfo;
+        }
 
 
 

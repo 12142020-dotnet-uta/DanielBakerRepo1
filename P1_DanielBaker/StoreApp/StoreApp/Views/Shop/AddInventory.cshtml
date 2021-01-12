@@ -40,7 +40,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ProductName" class="control-label"></label>
-                <input asp-for="ProductName" class="form-control" />
+                <select asp-for="ProductName" asp-items="@ViewBag.Inventory"></select>
                 <span asp-validation-for="ProductName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -52,7 +52,7 @@
                 <input type="hidden" asp-for="StoreId" value="@Model.Store.StoreLocationId" class="form-control" />
             </div>
             <div class="form-group">
-                <input type="submit" value="Create Store" class="btn btn-primary" />
+                <input type="submit" value="Add Inventory" class="btn btn-primary" />
             </div>
         </form>
     </div>

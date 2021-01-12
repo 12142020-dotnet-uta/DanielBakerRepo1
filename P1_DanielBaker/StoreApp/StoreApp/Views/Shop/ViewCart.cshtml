@@ -30,28 +30,34 @@
             <th>
                 Price
             </th>
+            <th>
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var orderLine in Model.ProductsInOrder)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => orderLine.OrderDetailsId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => orderLine.Item.Product.ProductName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => orderLine.Item.Product.ProductPrice)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => orderLine.OrderDetailsQuantity)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => orderLine.OrderDetailsPrice)
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => orderLine.OrderDetailsId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => orderLine.Item.Product.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => orderLine.Item.Product.ProductPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => orderLine.OrderDetailsQuantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => orderLine.OrderDetailsPrice)
+            </td>
+            <td>
+                <a asp-controller="Shop" asp-action="DeleteOrderLineItem" asp-route-orderLineId="@orderLine.OrderDetailsId">Remove Item</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

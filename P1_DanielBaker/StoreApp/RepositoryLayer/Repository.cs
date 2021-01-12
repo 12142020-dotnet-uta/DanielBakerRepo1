@@ -430,6 +430,35 @@ namespace RepositoryLayer
             return checkOutOrder;
         }
 
+        public Order GetCartByOrderLineId(Guid orderLineId)
+        {
+            OrderLineDetails orderLine = orderLines
+                .Include(o => o.Order)
+                .FirstOrDefault(o => o.OrderDetailsId == orderLineId);
+
+            Order order = orders
+                .Include(o => o.Store)
+                .Include(o => o.Customer)
+                .FirstOrDefault(o => o.OrderId == orderLine.Order.OrderId);
+
+            return order;
+        }
+
+        public bool DeleteOrderLineById(Guid orderLineId)
+        {
+            OrderLineDetails orderLine = orderLines.FirstOrDefault(o => o.OrderDetailsId == orderLineId);
+            var success = orderLines.Remove(orderLine);
+            _context.SaveChanges();
+
+            if (success != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
     }
 

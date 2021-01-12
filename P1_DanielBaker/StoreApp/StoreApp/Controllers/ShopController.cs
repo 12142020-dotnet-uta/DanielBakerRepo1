@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BusinessLogicLayer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ModelLayer.ViewModels;
 
 namespace StoreApp.Controllers
@@ -79,7 +80,23 @@ namespace StoreApp.Controllers
 
         public IActionResult Store(Guid id)
         {
+            if (TempData["ModelState"] != null)
+            {
+                ModelState.AddModelError("Failure", TempData["ModelState"].ToString());
+            }
+            
+
             ShoppingListViewModel storeInventory = _logic.GetStoreInventory(id);
+
+            List<string> productNames = new List<string>();
+            foreach (var item in storeInventory.Inventories)
+            {
+                productNames.Add(item.Product.ProductName);
+            }
+
+            ViewBag.Inventory = new SelectList(productNames);
+
+
             return View(storeInventory);
         }
 
@@ -90,8 +107,18 @@ namespace StoreApp.Controllers
             if (addInventory == null)
             {
                 ModelState.AddModelError("Failure", "Store does not exist");
-                return RedirectToAction("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
+
+            List<string> productNames = new List<string>();
+            foreach (var item in addInventory.Products)
+            {
+                productNames.Add(item.ProductName);
+            }
+
+            ViewBag.Inventory = new SelectList(productNames);
+
             return View(addInventory);
         }
 
@@ -101,9 +128,10 @@ namespace StoreApp.Controllers
             if (currentStoreInventory == null)
             {
                 ModelState.AddModelError("Failure", "Product does not exist");
-                return RedirectToAction("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
-            return View("Store", currentStoreInventory);
+            return RedirectToAction("Store", "Shop", new { id = newInventory.StoreId });
         }
 
         // handle null
@@ -114,7 +142,8 @@ namespace StoreApp.Controllers
             if (sessionId == null)
             {
                 ModelState.AddModelError("Failure", "User is not logged in");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             Guid customerId = new Guid(sessionId);
@@ -124,7 +153,8 @@ namespace StoreApp.Controllers
             if (cartView == null)
             {
                 ModelState.AddModelError("Failure", "Customer or store does not exist");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             return View(cartView);
@@ -138,7 +168,8 @@ namespace StoreApp.Controllers
             if (sessionId == null)
             {
                 ModelState.AddModelError("Failure", "User is not logged in");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             Guid customerId = new Guid(sessionId);
@@ -148,7 +179,8 @@ namespace StoreApp.Controllers
             if (cartList == null)
             {
                 ModelState.AddModelError("Failure", "Customer does not exist");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             return View(cartList);
@@ -173,9 +205,8 @@ namespace StoreApp.Controllers
             // if you are trying too add too much quantity
             if (updatedCart.error == 1)
             {
-                ModelState.AddModelError("Failure", $"{updatedCart.errorMessage}");
-                ShoppingListViewModel storeInventory = _logic.GetStoreInventory(cart.StoreId);
-                return View("Store", storeInventory);
+                TempData["ModelState"] = $"{updatedCart.errorMessage}";
+                return RedirectToAction("Store", "Shop", new { id = cart.StoreId });
             }
 
             return View("ViewCart", updatedCart);
@@ -188,7 +219,8 @@ namespace StoreApp.Controllers
             if (sessionId == null)
             {
                 ModelState.AddModelError("Failure", "User is not logged in");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             Guid customerId = new Guid(sessionId);
@@ -197,11 +229,11 @@ namespace StoreApp.Controllers
 
             if (checkedoutOrder.error == 1)
             {
-                ModelState.AddModelError("Failure", $"{checkedoutOrder.errorMessage}");
-                return View("Cart", checkedoutOrder.Store.StoreLocationId);
+                TempData["ModelState"] = $"{checkedoutOrder.errorMessage}";
+                ShoppingListViewModel storeInventory = _logic.GetStoreInventory(checkedoutOrder.Store.StoreLocationId);
+                return RedirectToAction("Store", "ViewCart", new { id = checkedoutOrder.Store.StoreLocationId });
             }
-
-            return RedirectToAction("ViewPastOrder", checkedoutOrder.OrderId);
+            return RedirectToAction("ViewPastOrder", new { orderId = checkedoutOrder.OrderId });
         }
 
         // handle null
@@ -212,7 +244,8 @@ namespace StoreApp.Controllers
             if (sessionId == null)
             {
                 ModelState.AddModelError("Failure", "User is not logged in");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             Guid customerId = new Guid(sessionId);
@@ -222,7 +255,8 @@ namespace StoreApp.Controllers
             if (pastOrder == null)
             {
                 ModelState.AddModelError("Failure", "Customer or store does not exist");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             return View(pastOrder);
@@ -237,7 +271,8 @@ namespace StoreApp.Controllers
             if (sessionId == null)
             {
                 ModelState.AddModelError("Failure", "User is not logged in");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             Guid customerId = new Guid(sessionId);
@@ -247,7 +282,8 @@ namespace StoreApp.Controllers
             if (orderList == null)
             {
                 ModelState.AddModelError("Failure", "Customer does not exist");
-                return View("Index");
+                StoreListViewModel storeList = _logic.GetStoreList();
+                return View("Index", storeList);
             }
 
             return View(orderList);
@@ -263,6 +299,12 @@ namespace StoreApp.Controllers
             }
 
             return View(orderList);
+        }
+
+        public IActionResult DeleteOrderLineItem(Guid orderLineId)
+        {
+            CartInfoViewModel deletedLineCart = _logic.DeleteOrderLineItem(orderLineId);
+            return RedirectToAction("ViewCart", new { StoreId = deletedLineCart.Store.StoreLocationId });
         }
 
     }
