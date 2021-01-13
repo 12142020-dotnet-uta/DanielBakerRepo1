@@ -17,8 +17,8 @@ namespace ModelLayer.ViewModels
         [Display(Name = "Product Name")]
         public string ProductName { get; set; }
 
-        [StringLength(250, MinimumLength = 10, ErrorMessage = "Description must be from 10 to 250 characters.")]
         [Required]
+        [StringLength(250, MinimumLength = 10, ErrorMessage = "Description must be from 10 to 250 characters.")]
         [Display(Name = "Product Description")]
         public string ProductDesc { get; set; }
 

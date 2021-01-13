@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BusinessLogicLayer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ModelLayer.ViewModels;
 
 namespace StoreApp.Controllers
@@ -47,17 +48,21 @@ namespace StoreApp.Controllers
                 ModelState.AddModelError("Failure", "Wrong Username and password combination!");
                 return View("Index");
             }
+
             HttpContext.Session.SetString("customerId", newUser.CustomerID.ToString());
             return RedirectToAction("Index", "Customer", newUser);
         }
 
+
         public IActionResult CreateCustomer()
         {
+            List<string> storeNames = _logic.GetStoreNames();
+
+            ViewBag.StoreNames = new SelectList(storeNames);
+
             return View();
         }
 
-
-        // add error stuff here
         public IActionResult CreateNewCustomer(CreateCustomerViewModel signUpView)
         {
             CustomerInfoViewModel customerCreated = _logic.CreateUser(signUpView);

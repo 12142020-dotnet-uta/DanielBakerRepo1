@@ -32,7 +32,7 @@ namespace RepositoryLayer
 
         public Customer LoginUser(Customer user)
         {
-            Customer c = customers.FirstOrDefault(c => c.CustomerUserName == user.CustomerUserName && c.CustomerPassword == user.CustomerPassword);
+            Customer c = customers.Include(c => c.PerferedStore).FirstOrDefault(c => c.CustomerUserName == user.CustomerUserName && c.CustomerPassword == user.CustomerPassword);
             return c;
         }
 
@@ -48,7 +48,8 @@ namespace RepositoryLayer
                     CustomerFName = newUser.CustomerFName,
                     CustomerLName = newUser.CustomerLName,
                     CustomerAge = newUser.CustomerAge,
-                    CustomerBirthday = newUser.CustomerBirthday
+                    CustomerBirthday = newUser.CustomerBirthday,
+                    PerferedStore = newUser.PerferedStore
                 };
 
                 customers.Add(newCustomer);
@@ -63,13 +64,13 @@ namespace RepositoryLayer
 
         public Customer GetCustomerById(Guid id)
         {
-            Customer customer = customers.FirstOrDefault(c => c.CustomerID == id);
+            Customer customer = customers.Include(c => c.PerferedStore).FirstOrDefault(c => c.CustomerID == id);
             return customer;
         }
 
         public List<Customer> GetCustomerList()
         {
-            return customers.ToList();
+            return customers.Include(c => c.PerferedStore).ToList();
         }
 
         public Customer EditCustomer(Customer c)
@@ -85,6 +86,7 @@ namespace RepositoryLayer
             editedCustomer.CustomerLName = c.CustomerLName;
             editedCustomer.CustomerAge = c.CustomerAge;
             editedCustomer.CustomerBirthday = c.CustomerBirthday;
+            editedCustomer.PerferedStore = c.PerferedStore;
 
             _context.SaveChanges();
 
@@ -116,6 +118,24 @@ namespace RepositoryLayer
 
             //returning null if a store with that user name already exists
             return null;
+        }
+
+        public List<string> GetStoreNames()
+        {
+            List<string> storeNames = new List<string>();
+
+            foreach (StoreLocation s in stores)
+            {
+                storeNames.Add(s.StoreLocationName);
+            }
+
+            return storeNames;
+        }
+
+        public StoreLocation GetStoreByName(string faveStore)
+        {
+            StoreLocation store = stores.FirstOrDefault(s => s.StoreLocationName == faveStore);
+            return store;
         }
 
         public StoreLocation GetStoreById(Guid id)
@@ -267,6 +287,7 @@ namespace RepositoryLayer
             Order order = orders
                 .Include(o => o.Store)
                 .Include(o => o.Customer)
+                .ThenInclude(c => c.PerferedStore)
                 .Where(o => o.OrderId == id)
                 .FirstOrDefault();
 
@@ -376,7 +397,10 @@ namespace RepositoryLayer
 
         public Order UpdateCartPrice(Order cart)
         {
-            Order editCart = orders.FirstOrDefault(o => o.OrderId == cart.OrderId);
+            Order editCart = orders
+                .Include(o => o.Customer)
+                .ThenInclude(c => c.PerferedStore)
+                .FirstOrDefault(o => o.OrderId == cart.OrderId);
            
             if (editCart == null)
             {

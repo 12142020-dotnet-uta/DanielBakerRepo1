@@ -86,3 +86,7 @@
 <p>
     <a asp-controller="Shop" asp-action="Index">Back To List</a>
 </p>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

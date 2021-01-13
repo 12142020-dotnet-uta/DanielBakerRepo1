@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BusinessLogicLayer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ModelLayer.Models;
 using ModelLayer.ViewModels;
 
@@ -33,8 +34,12 @@ namespace StoreApp.Controllers
                     RedirectToAction("Index", "Home");
                 }
 
+                customerInfo.PerferedStore = _logic.GetNewStoreById(customerInfo.StoreId);
+
                 return View(customerInfo);
             }
+
+            loggedInView.PerferedStore = _logic.GetNewStoreById(loggedInView.StoreId);
 
             return View(loggedInView);
         }
@@ -72,6 +77,10 @@ namespace StoreApp.Controllers
                 ModelState.AddModelError("Failure", "Customer does not exist to edit");
                 return View(customerToEdit);
             }
+
+            List<string> storeNames = _logic.GetStoreNames();
+
+            ViewBag.StoreNames = new SelectList(storeNames);
 
             return View(customerToEdit);
         }

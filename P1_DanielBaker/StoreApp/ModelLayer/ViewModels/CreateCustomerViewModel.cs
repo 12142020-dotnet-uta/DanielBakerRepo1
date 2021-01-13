@@ -39,5 +39,9 @@ namespace ModelLayer.ViewModels
 
         [Display(Name = "Birth date")]
         public DateTime? CustomerBirthday { get; set; }
+
+        [Display(Name = "Favorite Store")]
+        public string StoreNameChosen { get; set; }
+
     }
 }

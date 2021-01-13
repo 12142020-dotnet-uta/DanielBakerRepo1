@@ -19,7 +19,9 @@ namespace BusinessLogicLayer
                 CustomerUserName = customer.CustomerUserName,
                 CustomerFName = customer.CustomerFName,
                 CustomerLName = customer.CustomerLName,
-                CustomerAge = customer.CustomerAge
+                CustomerAge = customer.CustomerAge,
+                PerferedStore = customer.PerferedStore,
+                StoreId = customer.PerferedStore.StoreLocationId
             };
 
             return customerInfoViewModel;

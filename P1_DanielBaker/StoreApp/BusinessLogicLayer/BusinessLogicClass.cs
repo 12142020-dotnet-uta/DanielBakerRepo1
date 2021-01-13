@@ -20,6 +20,7 @@ namespace BusinessLogicLayer
             _mapper = mapper;
         }
 
+        
         public CustomerInfoViewModel LoginUser(LoginViewModel loginPlayer)
         {
             Customer customer = new Customer()
@@ -44,6 +45,8 @@ namespace BusinessLogicLayer
 
         public CustomerInfoViewModel CreateUser(CreateCustomerViewModel createdPlayer)
         {
+            StoreLocation favoriteStore = _repo.GetStoreByName(createdPlayer.StoreNameChosen);
+
             Customer customer = new Customer()
             {
                 CustomerUserName = createdPlayer.CustomerUserName,
@@ -51,7 +54,8 @@ namespace BusinessLogicLayer
                 CustomerFName = createdPlayer.CustomerFName,
                 CustomerLName = createdPlayer.CustomerLName,
                 CustomerAge = createdPlayer.CustomerAge,
-                CustomerBirthday = createdPlayer.CustomerBirthday
+                CustomerBirthday = createdPlayer.CustomerBirthday,
+                PerferedStore = favoriteStore
             };
 
             // if null????
@@ -102,10 +106,13 @@ namespace BusinessLogicLayer
         {
             Customer customer = _repo.GetCustomerById(customerToEdit.CustomerID);
 
+            StoreLocation favoriteStore = _repo.GetStoreByName(customerToEdit.StoreNameChosen);
+
             customer.CustomerFName = customerToEdit.CustomerFName;
             customer.CustomerLName = customerToEdit.CustomerLName;
             customer.CustomerAge = customerToEdit.CustomerAge;
             customer.CustomerBirthday = customerToEdit.CustomerBirthday;
+            customer.PerferedStore = favoriteStore;
 
             Customer editedCustomer = _repo.EditCustomer(customer);
 
@@ -152,6 +159,11 @@ namespace BusinessLogicLayer
             return storeList;
         }
 
+        public List<string> GetStoreNames()
+        {
+            List<string> storeNames = _repo.GetStoreNames();
+            return storeNames;
+        }
 
         public StoreInfoViewModel GetStoreById(Guid id)
         {
@@ -165,6 +177,12 @@ namespace BusinessLogicLayer
             StoreInfoViewModel storeViewToEdit = _mapper.ConvertStoreToStoreInfoViewModel(storeToEdit);
 
             return storeViewToEdit;
+        }
+
+        public StoreLocation GetNewStoreById(Guid id)
+        {
+            StoreLocation store = _repo.GetStoreById(id);
+            return store;
         }
 
         public StoreInfoViewModel EditStore(StoreInfoViewModel storeToEdit)
@@ -484,7 +502,6 @@ namespace BusinessLogicLayer
         public CartInfoViewModel CheckoutCart(Guid customerId, Guid cartId)
         {
             // should validate customer somewhere
-            Customer customer = _repo.GetCustomerById(customerId);
             Order order = _repo.GetOrderById(cartId);
             StoreLocation store = order.Store;
             List<OrderLineDetails> orderLineDetails = _repo.GetOrderLineListByCart(order);

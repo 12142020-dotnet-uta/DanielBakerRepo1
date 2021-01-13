@@ -2,8 +2,17 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to Targmart!</h1>
-    <p><a asp-controller="Login" asp-action="Index">Login</a></p>
-    <p><a asp-controller="Login" asp-action="CreateCustomer">Create New User</a></p>
+
+<div class="hero-background">
+    <div class="hero-text">
+        <h1>Welcome to Targmart!</h1>
+        <h3>Where We Sell Everything, Cause We Can</h3>
+        <div class="btn-container text-center">
+            <p><a class="btn btn-primary" asp-controller="Login" asp-action="Index">Shop!</a></p>
+            <p><a class="btn btn-primary" asp-controller="Login" asp-action="CreateCustomer">Create New User</a></p>
+        </div>
+    </div>
 </div>
+
+
+

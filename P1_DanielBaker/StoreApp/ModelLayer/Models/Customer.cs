@@ -41,7 +41,6 @@ namespace ModelLayer.Models
 
         public bool? isAdmin { get; set; } 
 
-
         public StoreLocation PerferedStore { get; set; }
 
         public void MakeAdmin()

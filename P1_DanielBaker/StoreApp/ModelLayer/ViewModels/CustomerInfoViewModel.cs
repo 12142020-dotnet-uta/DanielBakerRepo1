@@ -38,5 +38,10 @@ namespace ModelLayer.ViewModels
         public bool? isAdmin { get; set; }
 
         public StoreLocation PerferedStore { get; set; }
+
+        public Guid StoreId { get; set; }
+
+        [Display(Name = "Favorite Store")]
+        public string StoreNameChosen { get; set; }
     }
 }
