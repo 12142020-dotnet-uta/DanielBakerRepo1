@@ -36,6 +36,7 @@ namespace StoreApp.Controllers
             }
 
             HttpContext.Session.SetString("customerId", customerLoggingIn.CustomerID.ToString());
+            HttpContext.Session.SetString("isAdmin", customerLoggingIn.isAdmin.ToString());
 
             return RedirectToAction("Index", "Customer", customerLoggingIn);
         }
