@@ -406,7 +406,8 @@ namespace RepositoryLayer
             Order order = orders
                 .Include(o => o.Store)
                 .Include(o => o.Customer)
-                .Where(o => o.Store.StoreLocationId == storeId && o.isCart == true)
+                .ThenInclude(o => o.PerferedStore)
+                .Where(o => o.Store.StoreLocationId == storeId && o.isCart == true && o.Customer.CustomerID == customerId)
                 .FirstOrDefault();
 
             return order;
