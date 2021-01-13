@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ModelLayer.Models
 {
-    public class Inventory
+    public class Inventory : InventoryQuantity
     {
         [Key]
         public Guid InventoryId { get; set; } = Guid.NewGuid();
@@ -17,7 +17,13 @@ namespace ModelLayer.Models
         [Required]
         [Range(0, 1000)]
         public int ProductQuantity { get; set; } = 0;
-        
+
+        public int AddQuantity(int x)
+        {
+            ProductQuantity += x;
+            return ProductQuantity;
+        }
+
         public Inventory(){}
 
         public Inventory( Product product, StoreLocation store, int quantity )
