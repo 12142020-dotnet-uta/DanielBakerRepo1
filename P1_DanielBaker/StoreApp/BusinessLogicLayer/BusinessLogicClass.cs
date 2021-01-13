@@ -20,7 +20,11 @@ namespace BusinessLogicLayer
             _mapper = mapper;
         }
 
-        
+        /// <summary>
+        /// Takes in a Login View Model and logs in the customer if they exist. Returns null if they do not exist
+        /// </summary>
+        /// <param name="loginPlayer">Playing logging in username and password</param>
+        /// <returns>Customer info view model for the logged in customer</returns>
         public CustomerInfoViewModel LoginUser(LoginViewModel loginPlayer)
         {
             Customer customer = new Customer()
@@ -43,6 +47,11 @@ namespace BusinessLogicLayer
 
         }
 
+        /// <summary>
+        /// Takes the info from a create customer view model and creates a new customer if that user name is not in use.
+        /// </summary>
+        /// <param name="createdPlayer">Create customer view model being created</param>
+        /// <returns>Returns and logs in a new Customer info view model</returns>
         public CustomerInfoViewModel CreateUser(CreateCustomerViewModel createdPlayer)
         {
             StoreLocation favoriteStore = _repo.GetStoreByName(createdPlayer.StoreNameChosen);
@@ -70,6 +79,11 @@ namespace BusinessLogicLayer
             return newCustomerViewModel;
         }
 
+        /// <summary>
+        /// Searches for the customer and grabs them by their id
+        /// </summary>
+        /// <param name="id">customer id</param>
+        /// <returns>Customer info view model based on customer id</returns>
         public CustomerInfoViewModel GetCustomerById(Guid id)
         {
             Customer customer = _repo.GetCustomerById(id);
@@ -84,6 +98,10 @@ namespace BusinessLogicLayer
             return customerInfo;
         }
 
+        /// <summary>
+        /// Gets a list of all the customers in the database
+        /// </summary>
+        /// <returns>A list of all customers</returns>
         public CustomerListViewModel GetCustomerList()
         {
             CustomerListViewModel customerList = new CustomerListViewModel();
@@ -102,6 +120,11 @@ namespace BusinessLogicLayer
             return customerList;
         }
 
+        /// <summary>
+        /// Takes in customer info view model, finds the customer it is referencing, and edits them
+        /// </summary>
+        /// <param name="customerToEdit">Customer we are editing  viewmodel</param>
+        /// <returns>Update customer view model</returns>
         public CustomerInfoViewModel EditCustomer(CustomerInfoViewModel customerToEdit)
         {
             Customer customer = _repo.GetCustomerById(customerToEdit.CustomerID);
@@ -121,6 +144,11 @@ namespace BusinessLogicLayer
             return editedCustomerViewModel;
         }
 
+        /// <summary>
+        /// Creates a new store if one by that name does not already exist
+        /// </summary>
+        /// <param name="createdStore">New store info view model</param>
+        /// <returns>Store info view model of the new store</returns>
         public StoreInfoViewModel CreateStore(StoreInfoViewModel createdStore)
         {
             StoreLocation store = new StoreLocation()
@@ -142,6 +170,10 @@ namespace BusinessLogicLayer
             return newStoreViewModel;
         }
 
+        /// <summary>
+        /// Gets a list of all stores in the database
+        /// </summary>
+        /// <returns>List of all stores</returns>
         public StoreListViewModel GetStoreList()
         {
             StoreListViewModel storeList = new StoreListViewModel();
@@ -159,12 +191,21 @@ namespace BusinessLogicLayer
             return storeList;
         }
 
+        /// <summary>
+        /// Gets a list of all the store names in the database
+        /// </summary>
+        /// <returns>List of store names</returns>
         public List<string> GetStoreNames()
         {
             List<string> storeNames = _repo.GetStoreNames();
             return storeNames;
         }
 
+        /// <summary>
+        /// Gets store from database by a store id
+        /// </summary>
+        /// <param name="id">Store location id</param>
+        /// <returns>Store view model that was found by the id</returns>
         public StoreInfoViewModel GetStoreById(Guid id)
         {
             StoreLocation storeToEdit = _repo.GetStoreById(id);
@@ -179,12 +220,22 @@ namespace BusinessLogicLayer
             return storeViewToEdit;
         }
 
+        /// <summary>
+        /// Get a store object by id
+        /// </summary>
+        /// <param name="id">Store location id</param>
+        /// <returns>Store object based on id</returns>
         public StoreLocation GetNewStoreById(Guid id)
         {
             StoreLocation store = _repo.GetStoreById(id);
             return store;
         }
 
+        /// <summary>
+        /// Grabs a store info view model and edits a store based on whats inputted
+        /// </summary>
+        /// <param name="storeToEdit">The store info view model we are editing</param>
+        /// <returns>An edited store info view model</returns>
         public StoreInfoViewModel EditStore(StoreInfoViewModel storeToEdit)
         {
             StoreLocation store = _repo.GetStoreById(storeToEdit.StoreLocationId);
@@ -199,6 +250,10 @@ namespace BusinessLogicLayer
             return editedStoreIfoViewModel;
         }
 
+        /// <summary>
+        /// Gets a list of all products in the database
+        /// </summary>
+        /// <returns>A list of all product view models</returns>
         public ProductListViewModel GetProductList()
         {
             ProductListViewModel productList = new ProductListViewModel();
@@ -215,6 +270,11 @@ namespace BusinessLogicLayer
             return productList;
         }
 
+        /// <summary>
+        /// Gets a product info view model from a product id
+        /// </summary>
+        /// <param name="id">Product id</param>
+        /// <returns>A product view model based on the id</returns>
         public ProductInfoViewModel GetProductById(Guid id)
         {
             Product product = _repo.GetProductById(id);
@@ -228,6 +288,11 @@ namespace BusinessLogicLayer
             return productDetails;
         }
 
+        /// <summary>
+        /// Creates a new product if a product of that name does not already exist
+        /// </summary>
+        /// <param name="newProduct">Product model of the product we want to create</param>
+        /// <returns>A new product view model</returns>
         public ProductInfoViewModel CreateProduct(ProductInfoViewModel newProduct)
         {
             Product product = new Product()
@@ -251,7 +316,11 @@ namespace BusinessLogicLayer
             return newProductInfoViewModel;
         }
 
-
+        /// <summary>
+        /// Takes in a product to edit, edits it, saves to db, and returns the new edited product
+        /// </summary>
+        /// <param name="productToEdit">The product view model of the product we want to edit</param>
+        /// <returns>Updated product view model</returns>
         public ProductInfoViewModel EditProduct(ProductInfoViewModel productToEdit)
         {
             Product product = _repo.GetProductById(productToEdit.ProductID);
@@ -273,6 +342,11 @@ namespace BusinessLogicLayer
             return editedProductView;
         }
 
+        /// <summary>
+        /// Gets a stores inventory list based on it a store id
+        /// </summary>
+        /// <param name="storeId">Store id of the store we want to sees inventory</param>
+        /// <returns>A list of inventory at a store</returns>
         public ShoppingListViewModel GetStoreInventory(Guid storeId)
         {
             StoreLocation store = _repo.GetStoreById(storeId);
@@ -300,6 +374,11 @@ namespace BusinessLogicLayer
             return storeInventory;
         }
 
+        /// <summary>
+        /// Add inventory piece to a store based on store id
+        /// </summary>
+        /// <param name="storeId">Store id we want to update inventory at</param>
+        /// <returns>The inventory view model we added to the store</returns>
         public AddInventoryViewModel AddInventory(Guid storeId)
         {
             AddInventoryViewModel addInventoryViewModel = new AddInventoryViewModel();
@@ -340,6 +419,13 @@ namespace BusinessLogicLayer
             return addInventoryViewModel;
         }
 
+        /// <summary>
+        /// Adds a new inventory piece to a store based on store and product
+        /// </summary>
+        /// <param name="inventoryStore">The store we are adding inventory to id</param>
+        /// <param name="productName">Name of the product we are adding</param>
+        /// <param name="qantityAdded">The number of inventory we are adding</param>
+        /// <returns>The updated shopping list with the new inventory</returns>
         public ShoppingListViewModel AddNewInventory(Guid inventoryStore, string productName, int qantityAdded)
         {
             ShoppingListViewModel inventoryList = new ShoppingListViewModel();
@@ -367,6 +453,12 @@ namespace BusinessLogicLayer
             return inventoryList;
         }
 
+        /// <summary>
+        /// Gets the customers cart at a certain store
+        /// </summary>
+        /// <param name="storeId">Id of store we want</param>
+        /// <param name="customerId">Customer we are using</param>
+        /// <returns>Returns the cart info view model of the cart we grabbed</returns>
         public CartInfoViewModel GetCustomerCartAtStore(Guid storeId, Guid customerId)
         {
             StoreLocation store = _repo.GetStoreById(storeId);
@@ -403,13 +495,14 @@ namespace BusinessLogicLayer
             cart.ProductsInOrder = orderLineDetails;
 
             CartInfoViewModel cartInfo = _mapper.ConvertOrderToCartInfoViewModel(cart);
-
-
             return cartInfo;
-
-
         }
 
+        /// <summary>
+        /// Gets the current users carts
+        /// </summary>
+        /// <param name="customerId">Current user id</param>
+        /// <returns>A list of the users carts</returns>
         public CartListViewModel GetUserCartList(Guid customerId)
         {
             CartListViewModel cartList = new CartListViewModel();
@@ -437,6 +530,14 @@ namespace BusinessLogicLayer
             return cartList;
         }
 
+        /// <summary>
+        /// Adds a piece of inventory from a store to the correct cart for the store
+        /// </summary>
+        /// <param name="productName">Name of the product being added to the cart</param>
+        /// <param name="quantity">Quantity we want to add</param>
+        /// <param name="storeId">What store we are shopping at</param>
+        /// <param name="customerId">The current customer</param>
+        /// <returns>A view of the cart that the line was just added tp</returns>
         public CartInfoViewModel AddToCart(string productName, int quantity, Guid storeId, Guid customerId)
         {
 
@@ -498,7 +599,12 @@ namespace BusinessLogicLayer
             return cartInfo;
         }
 
-
+        /// <summary>
+        /// Checks out the selected cart
+        /// </summary>
+        /// <param name="customerId">current customer</param>
+        /// <param name="cartId">cart we want to check out</param>
+        /// <returns>a view mode of the checked out cart</returns>
         public CartInfoViewModel CheckoutCart(Guid customerId, Guid cartId)
         {
             // should validate customer somewhere
@@ -532,7 +638,11 @@ namespace BusinessLogicLayer
             return orderInfo;
         }
 
-
+        /// <summary>
+        /// Gets a completed order by the id of the order
+        /// </summary>
+        /// <param name="orderId">Order we want to see</param>
+        /// <returns>Completed order</returns>
         public CartInfoViewModel GetPastOrderById(Guid orderId)
         {
             Order order = _repo.GetOrderById(orderId);
@@ -551,6 +661,11 @@ namespace BusinessLogicLayer
             return orderInfo;
         }
 
+        /// <summary>
+        /// Gets a list of a users completed orders
+        /// </summary>
+        /// <param name="customerId">Current user</param>
+        /// <returns>List of customers orders</returns>
         public CartListViewModel GetUserPastOrders(Guid customerId)
         {
             CartListViewModel orderList = new CartListViewModel();
@@ -578,6 +693,11 @@ namespace BusinessLogicLayer
             return orderList;
         }
 
+        /// <summary>
+        /// Gets a list of a stores completed orders
+        /// </summary>
+        /// <param name="StoreId">Store id we want to look at</param>
+        /// <returns>A list of orders by store id</returns>
         public CartListViewModel GetStorePastOrders(Guid StoreId)
         {
             CartListViewModel orderList = new CartListViewModel();
@@ -607,7 +727,11 @@ namespace BusinessLogicLayer
         }
 
 
-
+        /// <summary>
+        /// Deletes an order line based on id
+        /// </summary>
+        /// <param name="orderLineId">Id of orderline we want to remove</param>
+        /// <returns>Cart with removed orderline</returns>
         public CartInfoViewModel DeleteOrderLineItem(Guid orderLineId)
         {
             Order order = _repo.GetCartByOrderLineId(orderLineId);

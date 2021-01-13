@@ -30,12 +30,22 @@ namespace RepositoryLayer
             orderLines = _context.orderLineDetails;
         }
 
+        /// <summary>
+        /// Checks to see if customer exists and can log in
+        /// </summary>
+        /// <param name="user">Customer trying to log in</param>
+        /// <returns>The customer logging in</returns>
         public Customer LoginUser(Customer user)
         {
             Customer c = customers.Include(c => c.PerferedStore).FirstOrDefault(c => c.CustomerUserName == user.CustomerUserName && c.CustomerPassword == user.CustomerPassword);
             return c;
         }
 
+        /// <summary>
+        /// Creates a new user base on new customer given
+        /// </summary>
+        /// <param name="newUser">The new customer to be made</param>
+        /// <returns>The new customer</returns>
         public Customer CreateUser(Customer newUser)
         {
             Customer c = customers.FirstOrDefault(c => c.CustomerUserName == newUser.CustomerUserName);
@@ -61,18 +71,31 @@ namespace RepositoryLayer
             return null;
         }
 
-
+        /// <summary>
+        /// Gets a customer by id
+        /// </summary>
+        /// <param name="id">Id of the customer</param>
+        /// <returns>customer</returns>
         public Customer GetCustomerById(Guid id)
         {
             Customer customer = customers.Include(c => c.PerferedStore).FirstOrDefault(c => c.CustomerID == id);
             return customer;
         }
 
+        /// <summary>
+        /// Gets a list of all customers
+        /// </summary>
+        /// <returns>List of customers</returns>
         public List<Customer> GetCustomerList()
         {
             return customers.Include(c => c.PerferedStore).ToList();
         }
 
+        /// <summary>
+        /// Edits a customer
+        /// </summary>
+        /// <param name="c">Customer to be edited</param>
+        /// <returns>newly edited customer</returns>
         public Customer EditCustomer(Customer c)
         {
             Customer editedCustomer = GetCustomerById(c.CustomerID);
@@ -94,11 +117,20 @@ namespace RepositoryLayer
 
         }
 
+        /// <summary>
+        /// Gets a list of all stores
+        /// </summary>
+        /// <returns>List of all stores</returns>
         public List<StoreLocation> GetStoreList()
         {
             return stores.ToList();
         }
 
+        /// <summary>
+        /// Creates a new store location
+        /// </summary>
+        /// <param name="newStore">New store object to be made</param>
+        /// <returns>New stor object</returns>
         public StoreLocation CreateStore(StoreLocation newStore)
         {
             StoreLocation s = stores.FirstOrDefault(s => s.StoreLocationName == newStore.StoreLocationName);
@@ -120,6 +152,10 @@ namespace RepositoryLayer
             return null;
         }
 
+        /// <summary>
+        /// List of store names
+        /// </summary>
+        /// <returns>List of store names only</returns>
         public List<string> GetStoreNames()
         {
             List<string> storeNames = new List<string>();
@@ -132,18 +168,33 @@ namespace RepositoryLayer
             return storeNames;
         }
 
+        /// <summary>
+        /// Gets a store by name
+        /// </summary>
+        /// <param name="faveStore">Name of the store</param>
+        /// <returns>Store object found by name</returns>
         public StoreLocation GetStoreByName(string faveStore)
         {
             StoreLocation store = stores.FirstOrDefault(s => s.StoreLocationName == faveStore);
             return store;
         }
 
+        /// <summary>
+        /// Gets a store object by id
+        /// </summary>
+        /// <param name="id">Id of the store we want to find</param>
+        /// <returns>Store object</returns>
         public StoreLocation GetStoreById(Guid id)
         {
             StoreLocation store = stores.FirstOrDefault(s => s.StoreLocationId == id);
             return store;
         }
 
+        /// <summary>
+        /// Edits a store
+        /// </summary>
+        /// <param name="storeToEdit">Store information to edit</param>
+        /// <returns>Newly edited store</returns>
         public StoreLocation EditStore(StoreLocation storeToEdit)
         {
             StoreLocation store = stores.FirstOrDefault(s => s.StoreLocationId == storeToEdit.StoreLocationId);
@@ -161,11 +212,20 @@ namespace RepositoryLayer
             return store;
         }
 
+        /// <summary>
+        /// Gets a list of all products
+        /// </summary>
+        /// <returns>List of products</returns>
         public List<Product> GetProductList()
         {
             return products.ToList();
         }
 
+        /// <summary>
+        /// Creates a new product
+        /// </summary>
+        /// <param name="newProduct">New product information</param>
+        /// <returns>Newly created product</returns>
         public Product CreateProduct(Product newProduct)
         {
 
@@ -189,18 +249,33 @@ namespace RepositoryLayer
             return null;
         }
 
+        /// <summary>
+        /// Get product by id
+        /// </summary>
+        /// <param name="id">Product we want to find</param>
+        /// <returns>Product</returns>
         public Product GetProductById(Guid id)
         {
            Product product = products.FirstOrDefault(p => p.ProductID == id);
            return product;
         }
 
+        /// <summary>
+        /// Gets a product by name
+        /// </summary>
+        /// <param name="name">name of the product</param>
+        /// <returns>product retrieved</returns>
         public Product GetProductByName(string name)
         {
             Product product = products.FirstOrDefault(p => p.ProductName == name);
             return product;
         }
 
+        /// <summary>
+        /// Edits a product
+        /// </summary>
+        /// <param name="product">Product we are edited</param>
+        /// <returns>Product newly edited</returns>
         public Product EditProduct(Product product)
         {
             Product editedProduct = products.FirstOrDefault(p => p.ProductID == product.ProductID);
@@ -221,6 +296,11 @@ namespace RepositoryLayer
 
         }
 
+        /// <summary>
+        /// Gets a list of a stores inventory
+        /// </summary>
+        /// <param name="store">Store we want inventory from</param>
+        /// <returns>List of inventory</returns>
         public List<Inventory> GetStoreInventory(StoreLocation store)
         {
             List<Inventory> storeInventory = inventories
@@ -231,6 +311,12 @@ namespace RepositoryLayer
             return storeInventory;
         }
 
+        /// <summary>
+        /// Gets inventory of a product at a store
+        /// </summary>
+        /// <param name="store">Store we want to check inventory</param>
+        /// <param name="product">Product we want to see</param>
+        /// <returns>Inventory of a product at a store</returns>
         public Inventory GetInventoryByStoreAndName(StoreLocation store, Product product)
         {
             Inventory newInventory = inventories
@@ -241,6 +327,11 @@ namespace RepositoryLayer
             return newInventory;
         }
 
+        /// <summary>
+        /// Adds inventory to a store
+        /// </summary>
+        /// <param name="addInventory">Inventory we want to add</param>
+        /// <returns>The new inventory</returns>
         public Inventory AddNewInventory(Inventory addInventory)
         {
             Inventory inventory = inventories.FirstOrDefault(i => i.Product.ProductID == addInventory.Product.ProductID
@@ -262,6 +353,11 @@ namespace RepositoryLayer
             return addInventory;
         }
 
+        /// <summary>
+        /// Creates a new order
+        /// </summary>
+        /// <param name="order">The order we want to create</param>
+        /// <returns>The newly created order</returns>
         public Order CreateOrder(Order order)
         {
             Order o = orders.FirstOrDefault(c => c.Store == order.Store && c.Customer == order.Customer && c.isCart == true);
@@ -282,6 +378,11 @@ namespace RepositoryLayer
             return null;
         }
 
+        /// <summary>
+        /// Get an order by id
+        /// </summary>
+        /// <param name="id">id of the order we want</param>
+        /// <returns>order found</returns>
         public Order GetOrderById(Guid id)
         {
             Order order = orders
@@ -294,6 +395,12 @@ namespace RepositoryLayer
             return order;
         }
 
+        /// <summary>
+        /// Get an order by store and by customer
+        /// </summary>
+        /// <param name="storeId">Store location</param>
+        /// <param name="customerId">Current Customer</param>
+        /// <returns>The order that was found</returns>
         public Order GetOrderByStoreAndCustomer(Guid storeId, Guid customerId)
         {
             Order order = orders
@@ -305,6 +412,11 @@ namespace RepositoryLayer
             return order;
         }
 
+        /// <summary>
+        /// Get the list of carts a customer has
+        /// </summary>
+        /// <param name="customerId">Customer we want to find carts</param>
+        /// <returns>List of a customers orders</returns>
         public List<Order> GetCartsByCustomerId(Guid customerId)
         {
             List<Order> orderList = orders
@@ -316,7 +428,11 @@ namespace RepositoryLayer
             return orderList;
         }
 
-
+        /// <summary>
+        /// Gets a list of orders a customer has
+        /// </summary>
+        /// <param name="customerId">Customer we want to find orders</param>
+        /// <returns>Customers past orders</returns>
         public List<Order> GetOrdersByCustomerId(Guid customerId)
         {
             List<Order> orderList = orders
@@ -328,6 +444,11 @@ namespace RepositoryLayer
             return orderList;
         }
 
+        /// <summary>
+        /// Gets all order from a store
+        /// </summary>
+        /// <param name="storeId">Store we want to find orders from</param>
+        /// <returns>List of orders at a store</returns>
         public List<Order> GetOrdersByStoreId(Guid storeId)
         {
             List<Order> orderList = orders
@@ -340,6 +461,13 @@ namespace RepositoryLayer
             return orderList;
         }
 
+        /// <summary>
+        /// Adds an order line detail to an order
+        /// </summary>
+        /// <param name="inventory">The inventory we are using in an order line</param>
+        /// <param name="cart">The cart we are adding to</param>
+        /// <param name="quantity">The quantity of inventory we are adding</param>
+        /// <returns>The new order line</returns>
         public OrderLineDetails AddOrderLineDetail(Inventory inventory, Order cart, int quantity)
         {
             OrderLineDetails orderLineDetail = orderLines
@@ -384,6 +512,11 @@ namespace RepositoryLayer
             return orderLineDetail;
         }
 
+        /// <summary>
+        /// Gets the order lines for an order
+        /// </summary>
+        /// <param name="cart">The order we want orderlines</param>
+        /// <returns>List of orderlines</returns>
         public List<OrderLineDetails> GetOrderLineListByCart(Order cart)
         {
             List<OrderLineDetails> orderLineDetails = orderLines
@@ -396,6 +529,11 @@ namespace RepositoryLayer
             return orderLineDetails;
         }
 
+        /// <summary>
+        /// Updates a cart price
+        /// </summary>
+        /// <param name="cart">The cart we want to updates price</param>
+        /// <returns>The order with the updated price</returns>
         public Order UpdateCartPrice(Order cart)
         {
             Order editCart = orders
@@ -424,6 +562,11 @@ namespace RepositoryLayer
             return editCart;
         }
 
+        /// <summary>
+        /// Removes inventory from store when order is purchased
+        /// </summary>
+        /// <param name="orderLines">The order lines being taken away from inventory</param>
+        /// <param name="inventory">The inventory we are editing</param>
         public void RemoveInventoryBasedOnOrder(List<OrderLineDetails> orderLines, List<Inventory> inventory)
         {
       
@@ -445,6 +588,11 @@ namespace RepositoryLayer
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Checks out a cart
+        /// </summary>
+        /// <param name="cart">The cart we want to check out</param>
+        /// <returns>The checked out cart</returns>
         public Order CheckoutCart(Order cart)
         {
             Order checkOutOrder = orders.FirstOrDefault(o => o.OrderId == cart.OrderId);
@@ -456,6 +604,11 @@ namespace RepositoryLayer
             return checkOutOrder;
         }
 
+        /// <summary>
+        /// Find a cart based on an orderline
+        /// </summary>
+        /// <param name="orderLineId">Order line we want to find cart by</param>
+        /// <returns>Order bassed on orderline</returns>
         public Order GetCartByOrderLineId(Guid orderLineId)
         {
             OrderLineDetails orderLine = orderLines
@@ -470,6 +623,11 @@ namespace RepositoryLayer
             return order;
         }
 
+        /// <summary>
+        /// Deletes an order line from an order
+        /// </summary>
+        /// <param name="orderLineId">Order line we want to delete</param>
+        /// <returns>True or false if it deletes</returns>
         public bool DeleteOrderLineById(Guid orderLineId)
         {
             OrderLineDetails orderLine = orderLines.FirstOrDefault(o => o.OrderDetailsId == orderLineId);
