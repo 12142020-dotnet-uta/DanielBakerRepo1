@@ -57,6 +57,14 @@ html {
   position: relative;
   min-height: 100%;
 }
+.container{
+    margin-top: 20px;
+}
+
+.navbar 
+{
+    margin-bottom = 0 !important;
+}
 
 body {
   /* Margin bottom by footer height */

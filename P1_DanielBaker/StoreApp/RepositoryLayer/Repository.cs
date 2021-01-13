@@ -332,6 +332,7 @@ namespace RepositoryLayer
         {
             List<Order> orderList = orders
                 .Include(o => o.Customer)
+                .ThenInclude(c => c.PerferedStore)
                 .Include(o => o.Store)
                 .Where(o => o.Store.StoreLocationId == storeId && o.isCart == false && o.isOrdered == true)
                 .ToList();

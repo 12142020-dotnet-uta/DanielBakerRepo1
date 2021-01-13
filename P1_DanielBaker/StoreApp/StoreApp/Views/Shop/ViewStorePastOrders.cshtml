@@ -14,7 +14,7 @@
                 Cart Id
             </th>
             <th>
-                Store Location
+                Ordered By
             </th>
             <th>
                 No. Items
@@ -39,7 +39,7 @@
                 @cart.OrderId
             </td>
             <td>
-                @cart.Store.StoreLocationName
+                @cart.Customer.CustomerUserName 
             </td>
             <td>
                 @cart.ProductsInOrder.Count()
