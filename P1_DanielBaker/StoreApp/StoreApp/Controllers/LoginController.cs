@@ -51,6 +51,7 @@ namespace StoreApp.Controllers
             }
 
             HttpContext.Session.SetString("customerId", newUser.CustomerID.ToString());
+            HttpContext.Session.SetString("isAdmin", newUser.isAdmin.ToString());
             return RedirectToAction("Index", "Customer", newUser);
         }
 

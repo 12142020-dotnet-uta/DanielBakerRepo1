@@ -39,7 +39,7 @@ namespace ModelLayer.Models
         // move to this eventually instead of age
         public DateTime? CustomerBirthday { get; set; }
 
-        public bool? isAdmin { get; set; } 
+        public bool? isAdmin { get; set; } = false;
 
         public StoreLocation PerferedStore { get; set; }
 

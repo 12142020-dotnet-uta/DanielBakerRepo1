@@ -19,7 +19,7 @@ namespace RepositoryLayer
         {
             if (!options.IsConfigured)
             {
-                options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=TargmartMVCTest;Trusted_Connection=True;");
+                options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=TargmartMVC;Trusted_Connection=True;");
             }
 
         }

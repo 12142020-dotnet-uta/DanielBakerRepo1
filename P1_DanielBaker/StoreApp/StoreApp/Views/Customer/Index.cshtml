@@ -9,7 +9,7 @@
     var isAdmin = @HttpContextAccessor.HttpContext.Session.GetString("isAdmin");
 }
 
-    <h1>Welcome @Model.CustomerFName! @isAdmin</h1>
+    <h1>Welcome @Model.CustomerFName!</h1>
 
 <a asp-controller="Shop" asp-action="Store" asp-route-id=" @Model.PerferedStore.StoreLocationId">Quick Shop!</a>
 <br />
